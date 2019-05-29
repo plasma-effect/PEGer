@@ -21,7 +21,14 @@ namespace PEGer
 
         public R Parse(string line, ref int index)
         {
-            return this.expr.Parse(line, ref index) ?? this.failure;
+            var dummy = index;
+            var ret = this.expr.Parse(line, ref dummy);
+            if(ret is null)
+            {
+                return this.failure;
+            }
+            index = dummy;
+            return ret;
         }
     }
     public static class Optional

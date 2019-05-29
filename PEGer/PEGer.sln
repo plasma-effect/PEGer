@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEGer", "PEGer\PEGer.csproj", "{A01596A4-86CA-45ED-A816-4FADFA1F19F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTest", "ParserTest\ParserTest.csproj", "{DF49624A-9072-4882-8A9C-60BC9E0B8ADA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A01596A4-86CA-45ED-A816-4FADFA1F19F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A01596A4-86CA-45ED-A816-4FADFA1F19F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A01596A4-86CA-45ED-A816-4FADFA1F19F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF49624A-9072-4882-8A9C-60BC9E0B8ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF49624A-9072-4882-8A9C-60BC9E0B8ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF49624A-9072-4882-8A9C-60BC9E0B8ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF49624A-9072-4882-8A9C-60BC9E0B8ADA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
