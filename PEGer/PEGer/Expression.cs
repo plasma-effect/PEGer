@@ -29,7 +29,7 @@ namespace PEGer
 
     public abstract class ExpressionBase<T> : IExpression
     {
-        internal abstract void InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex);
+        internal abstract IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex);
         public int Instance<TResult>(Parser<TResult> parser, List<IExpression> exprs)
         {
             if(exprs.Exist(this) is int index)
@@ -38,7 +38,8 @@ namespace PEGer
             }
             var ret = exprs.Count;
             exprs.Add(this);
-            InstanceImplement(parser, exprs, ret);
+            parser.Instances.Add(null);
+            parser[ret] = InstanceImplement(parser, exprs, ret);
             return ret;
         }
     }
@@ -70,8 +71,8 @@ namespace PEGer
             else
             {
                 var start = index;
-                var val = ParseImplementation(str, ref index, exceptions, memo);
                 this.Parser.SpaceSkip(str, ref index);
+                var val = ParseImplementation(str, ref index, exceptions, memo);
                 memo.Add(this.Index, start, index, val);
                 return val;
             }

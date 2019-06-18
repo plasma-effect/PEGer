@@ -25,9 +25,9 @@ namespace PEGer
             this.error = error;
         }
 
-        internal override void InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
-            parser.Instances.Add(new InstancedClass<ParseResult>(this.regex, this.func, this.error, parser, thisIndex));
+            return new InstancedClass<ParseResult>(this.regex, this.func, this.error, parser, thisIndex);
         }
 
         internal class InstancedClass<ParseResult> : InstanceBase<T, ParseResult>

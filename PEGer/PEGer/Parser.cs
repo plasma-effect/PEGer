@@ -91,10 +91,10 @@ namespace PEGer
             return hashCode;
         }
 
-        internal override void InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var exprIndex = this.expr.Instance(parser, exprs);
-            parser.Instances.Add(new InstanceClass<ParseResult>(exprIndex, this.func, this.error, parser, thisIndex));
+            return new InstanceClass<ParseResult>(exprIndex, this.func, this.error, parser, thisIndex);
         }
 
         internal class InstanceClass<ParseResult> : InstanceBase<TResult, ParseResult>
@@ -186,7 +186,6 @@ namespace PEGer
         public bool Parse(string str, out TResult ret, out List<ParsingException> exceptions,out int endPoint)
         {
             var index = 0;
-            SpaceSkip(str, ref index);
             exceptions = new List<ParsingException>();
             try
             {
@@ -220,6 +219,18 @@ namespace PEGer
                 result = false;
             }
             return result;
+        }
+
+        internal IInstancedExpression<TResult> this[int index]
+        {
+            get
+            {
+                return this.Instances[index];
+            }
+            set
+            {
+                this.Instances[index] = value;
+            }
         }
     }
 }
