@@ -8,13 +8,17 @@ using UtilityLibrary;
 
 namespace PEGer
 {
+    /// <summary>
+    /// Regular Expression
+    /// </summary>
+    /// <typeparam name="T">Return Type</typeparam>
     public class Regex<T> : ExpressionBase<T>
     {
         IRegex regex;
         Func<StringView, int, T> func;
         Func<Exception> error;
 
-        public Regex(IRegex regex, Func<StringView, int, T> func, Func<Exception> error)
+        private Regex(IRegex regex, Func<StringView, int, T> func, Func<Exception> error)
         {
             this.regex = regex;
             this.func = func;
@@ -62,14 +66,72 @@ namespace PEGer
             }
         }
 
+        /// <summary>
+        /// Create Regex
+        /// </summary>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <returns>Expression</returns>
         public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func)
         {
             return new Regex<T>(regex, func, null);
         }
 
-        public static Regex<T> Create(IRegex regex,Func<StringView,int,T> func,Func<Exception> error)
+        /// <summary>
+        /// Create Regex with Custom Exception
+        /// </summary>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <returns>Expression</returns>
+        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, Func<Exception> error)
         {
             return new Regex<T>(regex, func, error);
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Regex<T> regex &&
+                   EqualityComparer<IRegex>.Default.Equals(this.regex, regex.regex) &&
+                   EqualityComparer<Func<StringView, int, T>>.Default.Equals(this.func, regex.func) &&
+                   EqualityComparer<Func<Exception>>.Default.Equals(this.error, regex.error);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 942585704;
+            hashCode = hashCode * -1521134295 + EqualityComparer<IRegex>.Default.GetHashCode(this.regex);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Func<StringView, int, T>>.Default.GetHashCode(this.func);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Func<Exception>>.Default.GetHashCode(this.error);
+            return hashCode;
+        }
     }
+
+    /// <summary>
+    /// Create Regex Instance without Transform Function
+    /// </summary>
+    public static class Regex
+    {
+        /// <summary>
+        /// Create Regex
+        /// </summary>
+        /// <param name="regex">Regular Expression</param>
+        /// <returns>Expression</returns>
+        public static Regex<string> Create(IRegex regex)
+        {
+            return Regex<string>.Create(regex, (view, _) => view.ToString());
+        }
+
+        /// <summary>
+        /// Create Regex with Custom Exception
+        /// </summary>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <returns>Expression</returns>
+        public static Regex<string> Create(IRegex regex,Func<Exception> error)
+        {
+            return Regex<string>.Create(regex, (view, _) => view.ToString(), error);
+        }
+    }
+
 }

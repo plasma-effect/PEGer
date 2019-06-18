@@ -5,24 +5,59 @@ using System.Collections.Generic;
 
 namespace PEGer
 {
+    /// <summary>
+    /// Create Value without Transform Function
+    /// </summary>
     public static class Value
     {
+        /// <summary>
+        /// Create Value from Expression
+        /// </summary>
+        /// <typeparam name="T">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <returns>Value</returns>
         static public InstancedValue<T, T> Create<T>(ExpressionBase<T> expr)
         {
             return new InstancedValue<T, T>(expr, v => v, null);
         }
+        /// <summary>
+        /// Create Value from Expression with Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="error">Function that return Custom Exception from Parsing Exception</param>
+        /// <returns>Value</returns>
         static public InstancedValue<T, T> Create<T>(ExpressionBase<T> expr, Func<ParsingException, Exception> error)
         {
             return new InstancedValue<T, T>(expr, v => v, error);
         }
     }
 
+    /// <summary>
+    /// Value Expression
+    /// </summary>
+    /// <typeparam name="T">Return Type</typeparam>
     public abstract class Value<T> : ExpressionBase<T>
     {
+        /// <summary>
+        /// Return Value Expression from Expression
+        /// </summary>
+        /// <typeparam name="BaseT">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <returns>Value Expression</returns>
         static public InstancedValue<BaseT, T> Create<BaseT>(ExpressionBase<BaseT> expr, Func<BaseT,T> func)
         {
             return new InstancedValue<BaseT, T>(expr, func, null);
         }
+        /// <summary>
+        /// Return Value Expression with Custom Exception from Expression
+        /// </summary>
+        /// <typeparam name="BaseT">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception from Parsing Exception</param>
+        /// <returns></returns>
         static public InstancedValue<BaseT,T> Create<BaseT>(ExpressionBase<BaseT> expr, Func<BaseT, T> func,Func<ParsingException,Exception> error)
         {
             return new InstancedValue<BaseT, T>(expr, func, error);
@@ -34,7 +69,7 @@ namespace PEGer
         Func<T, TResult> func;
         Func<ParsingException, Exception> error;
 
-        public InstancedValue(ExpressionBase<T> expr, Func<T, TResult> func, Func<ParsingException, Exception> error)
+        internal InstancedValue(ExpressionBase<T> expr, Func<T, TResult> func, Func<ParsingException, Exception> error)
         {
             this.expr = expr;
             this.func = func;
@@ -95,26 +130,41 @@ namespace PEGer
                 }
             }
         }
-
     }
+    /// <summary>
+    /// Static Class for Create Parser
+    /// </summary>
+    public static class Parser
+    {
+        /// <summary>
+        /// Constuct Parser from Value
+        /// </summary>
+        /// <typeparam name="TResult">Result Value</typeparam>
+        /// <param name="initValue">Initial Value</param>
+        /// <returns>Parser</returns>
+        public static Parser<TResult> Create<TResult>(Value<TResult> initValue)
+        {
+            return new Parser<TResult>(initValue);
+        }
+    }
+    /// <summary>
+    /// Parser Type
+    /// </summary>
+    /// <typeparam name="TResult">Result Type</typeparam>
     public class Parser<TResult>
     {
         internal List<IInstancedExpression<TResult>> Instances { get; }
         int startIndex;
-        public bool SpaceIgnore { get; set; }
-        public Parser(Value<TResult> initValue, params IExpression[] exprs)
+        bool SpaceIgnore { get; set; }
+        internal Parser(Value<TResult> initValue)
         {
             this.Instances = new List<IInstancedExpression<TResult>>();
             var internalExpr = new List<IExpression>();
             this.startIndex = initValue.Instance(this, internalExpr);
-            foreach (var e in exprs)
-            {
-                e.Instance(this, internalExpr);
-            }
             this.SpaceIgnore = true;
         }
 
-        public void SpaceSkip(string str,ref int index)
+        internal void SpaceSkip(string str,ref int index)
         {
             if (this.SpaceIgnore)
             {
@@ -125,6 +175,14 @@ namespace PEGer
             }
         }
 
+        /// <summary>
+        /// Parse String
+        /// </summary>
+        /// <param name="str">Parsing Target String</param>
+        /// <param name="ret">Return Value (if Parsing Action succeeded)</param>
+        /// <param name="exceptions">Parsing Errors</param>
+        /// <param name="endPoint">Stop Point (if Parsing Action succeeded) or -1 (otherwise)</param>
+        /// <returns>Whether It Succeeded</returns>
         public bool Parse(string str, out TResult ret, out List<ParsingException> exceptions,out int endPoint)
         {
             var index = 0;
@@ -145,6 +203,13 @@ namespace PEGer
             }
         }
 
+        /// <summary>
+        /// Parse String (if end point is not string end, this action fail)
+        /// </summary>
+        /// <param name="str">Parsing Target String</param>
+        /// <param name="ret">Return Value (if Parsing Action succeeded)</param>
+        /// <param name="exceptions">Parsing Errors</param>
+        /// <returns>Whether It Succeeded</returns>
         public bool ParseFullMatch(string str, out TResult ret, out List<ParsingException> exceptions)
         {
             var result = Parse(str, out ret, out exceptions, out var end);
