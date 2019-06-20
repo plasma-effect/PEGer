@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Copyright (c) 2019 plasma_effect
+//This source code is under MIT License. See ./LICENSE
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,95 +12,86 @@ namespace PEGer
     /// <typeparam name="TResult">Return Type</typeparam>
     public static class Repeat<TResult>
     {
-        public class CreateClass<T>
-        {
-            ExpressionBase<T> expr;
-
-            public CreateClass(ExpressionBase<T> expr)
-            {
-                this.expr = expr;
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression with Min Count, Max Count, and Custom Error
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <param name="minCount">Min Count</param>
-            /// <param name="maxCount">Max Count</param>
-            /// <param name="error">Function that return Custom Exception</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T, TResult> Create(Func<List<T>, TResult> func, int minCount, int maxCount, Func<int, Exception> error)
-            {
-                return new Repeat<T, TResult>(this.expr, func, minCount, maxCount, error);
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression with Max Count, and Custom Error
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <param name="minCount">Min Count</param>
-            /// <param name="error">Function that return Custom Exception</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T, TResult> Create(Func<List<T>, TResult> func, int minCount, Func<int, Exception> error)
-            {
-                return Create(func, minCount,int.MaxValue, error);
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression with Custom Error
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <param name="error">Function that return Custom Exception</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T, TResult> Create(Func<List<T>, TResult> func, Func<int, Exception> error)
-            {
-                return Create(func, 0, int.MaxValue, error);
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression with Min Count and Max Count
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <param name="minCount">Min Count</param>
-            /// <param name="maxCount">Max Count</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T,TResult> Create(Func<List<T>,TResult> func,int minCount,int maxCount)
-            {
-                return Create(func, minCount, maxCount, null);
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression with Max Count
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <param name="minCount">Min Count</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T, TResult> Create(Func<List<T>, TResult> func, int minCount)
-            {
-                return Create(func, minCount, int.MaxValue, null);
-            }
-
-            /// <summary>
-            /// Create Repetitive Expression
-            /// </summary>
-            /// <param name="func">Transform Function</param>
-            /// <returns>Repetitive Expression</returns>
-            public Repeat<T, TResult> Create(Func<List<T>, TResult> func)
-            {
-                return Create(func, 0, int.MaxValue, null);
-            }
-        }
         /// <summary>
-        /// Set Expression for Create
+        /// Create Repetitive Expression with Min Count, Max Count, and Custom Exception
         /// </summary>
         /// <typeparam name="T">Expression Return Type</typeparam>
-        /// <param name="expr">Repetitive Expression</param>
-        /// <returns>Object for Create Repetitive Expression</returns>
-        public static CreateClass<T> Set<T>(ExpressionBase<T> expr)
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="minCount">Min Count</param>
+        /// <param name="maxCount">Max Count</param>
+        /// <param name="error">Custom Exception (that is thrown when repetitive count is less than minCount)</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func, int minCount, int maxCount, Func<int, Exception> error)
         {
-            return new CreateClass<T>(expr);
+            return new Repeat<T, TResult>(expr, func, minCount, maxCount, error);
         }
 
+        /// <summary>
+        /// Create Repetitive Expression with Min Count and Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="minCount">Min Count</param>
+        /// <param name="error">Custom Exception (that is thrown when repetitive count is less than minCount)</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func, int minCount, Func<int, Exception> error)
+        {
+            return Create(expr, func, minCount, int.MaxValue, error);
+        }
+
+        /// <summary>
+        /// Create Repetitive Expression with Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Custom Exception (that is thrown when repetitive count is less than minCount)</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func, Func<int, Exception> error)
+        {
+            return Create(expr, func, 0, int.MaxValue, error);
+        }
+
+        /// <summary>
+        /// Create Repetitive Expression with Min Count and Max Count
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="minCount">Min Count</param>
+        /// <param name="maxCount">Max Count</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func, int minCount, int maxCount)
+        {
+            return Create(expr, func, minCount, maxCount, null);
+        }
+
+        /// <summary>
+        /// Create Repetitive Expression with Min Count
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="minCount">Min Count</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func, int minCount)
+        {
+            return Create(expr, func, minCount, int.MaxValue, null);
+        }
+
+        /// <summary>
+        /// Create Repetitive Expression
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <returns>Repetitive Expression</returns>
+        public static Repeat<T, TResult> Create<T>(ExpressionBase<T> expr, Func<List<T>, TResult> func)
+        {
+            return Create(expr, func, 0, int.MaxValue, null);
+        }
     }
 
     public class Repeat<T, TResult> : ExpressionBase<TResult>

@@ -23,7 +23,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest1()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum);
+            var rep = Repeat<int>.Create(regex, Sum);
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {
@@ -39,7 +39,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest2()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum, 2);
+            var rep = Repeat<int>.Create(regex, Sum, 2);
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {
@@ -56,7 +56,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest3()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum, 2, 3);
+            var rep = Repeat<int>.Create(regex, Sum, 2, 3);
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {
@@ -73,7 +73,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest4()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum, _ => new Exception("Test"));
+            var rep = Repeat<int>.Create(regex, Sum, _ => new Exception("Test"));
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {
@@ -89,7 +89,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest5()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum, 2, _ => new Exception("Test"));
+            var rep = Repeat<int>.Create(regex, Sum, 2, _ => new Exception("Test"));
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {
@@ -106,7 +106,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest6()
         {
-            var rep = Repeat<int>.Set(regex).Create(Sum, 2, 3, _ => new Exception("Test"));
+            var rep = Repeat<int>.Create(regex, Sum, 2, 3, _ => new Exception("Test"));
             var value = Value.Create(rep);
             var parser = Parser.Create(value);
             {

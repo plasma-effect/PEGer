@@ -137,15 +137,17 @@ namespace PEGer
     public static class Parser
     {
         /// <summary>
-        /// Constuct Parser from Value
+        /// Constuct Parser from Expr
         /// </summary>
         /// <typeparam name="TResult">Result Value</typeparam>
-        /// <param name="initValue">Initial Value</param>
+        /// <param name="expr">Initial Expr</param>
         /// <returns>Parser</returns>
-        public static Parser<TResult> Create<TResult>(Value<TResult> initValue)
+        public static Parser<TResult> Create<TResult>(ExpressionBase<TResult> expr)
         {
-            return new Parser<TResult>(initValue);
+            return new Parser<TResult>(expr);
         }
+
+
     }
     /// <summary>
     /// Parser Type
@@ -156,7 +158,7 @@ namespace PEGer
         internal List<IInstancedExpression<TResult>> Instances { get; }
         int startIndex;
         bool SpaceIgnore { get; set; }
-        internal Parser(Value<TResult> initValue)
+        internal Parser(ExpressionBase<TResult> initValue)
         {
             this.Instances = new List<IInstancedExpression<TResult>>();
             var internalExpr = new List<IExpression>();
