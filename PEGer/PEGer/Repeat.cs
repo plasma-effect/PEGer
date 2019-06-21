@@ -111,6 +111,27 @@ namespace PEGer
             this.error = error;
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Repeat<T, TResult> repeat &&
+                   EqualityComparer<ExpressionBase<T>>.Default.Equals(this.expr, repeat.expr) &&
+                   EqualityComparer<Func<List<T>, TResult>>.Default.Equals(this.func, repeat.func) &&
+                   this.minCount == repeat.minCount &&
+                   this.maxCount == repeat.maxCount &&
+                   EqualityComparer<Func<int, Exception>>.Default.Equals(this.error, repeat.error);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -684230212;
+            hashCode = hashCode * -1521134295 + EqualityComparer<ExpressionBase<T>>.Default.GetHashCode(this.expr);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Func<List<T>, TResult>>.Default.GetHashCode(this.func);
+            hashCode = hashCode * -1521134295 + this.minCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.maxCount.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<Func<int, Exception>>.Default.GetHashCode(this.error);
+            return hashCode;
+        }
+
         internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var exprIndex = this.expr.Instance(parser, exprs);
