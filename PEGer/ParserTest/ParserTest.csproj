@@ -59,6 +59,7 @@
     <Compile Include="RegexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeatTest.cs" />
+    <Compile Include="SelectTest.cs" />
     <Compile Include="SequenceTest.cs" />
   </ItemGroup>
   <ItemGroup>
