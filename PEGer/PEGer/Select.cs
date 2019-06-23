@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using static UtilityLibrary.IntegerEnumerable;
 using static PEGer.Utility;
+using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -1677,31 +1679,28 @@ namespace PEGer
             this.N = this.exprIndexes.Length;
         }
 
-        protected override TResult ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+        protected override Expected<TResult,ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
         {
             var start = index;
             var selectExceptions = new ParsingException[this.N];
             foreach(var i in Range(this.N))
             {
                 index = start;
-                try
+                var val = this.Parser[this.exprIndexes[i]].Parse(str, ref index, exceptions, memo);
+                if(val.TryGet(out var obj))
                 {
-                    return this.funcs[i](this.Parser[this.exprIndexes[i]].Parse(str, ref index, exceptions, memo));
-                }
-                catch(ParsingException exc)
-                {
-                    selectExceptions[i] = exc;
+                    return Success(this.funcs[i](obj));
                 }
             }
             index = start;
             if(this.error is null)
             {
                 exceptions.AddRange(selectExceptions);
-                throw new ParsingException(index, new ArgumentException("All Expression don't match this string"));
+                return Failure<TResult>(new ParsingException(index, new ArgumentException("All Expression don't match this string")));
             }
             else
             {
-                throw new ParsingException(index, this.error(selectExceptions));
+                return Failure<TResult>(new ParsingException(index, this.error(selectExceptions)));
             }
         }
     }

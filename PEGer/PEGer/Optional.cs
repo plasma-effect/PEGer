@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UtilityLibrary;
 
 namespace PEGer
 {
@@ -71,7 +72,7 @@ namespace PEGer
             return hashCode;
         }
 
-        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override InstanceBase<TResult, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var exprIndex = this.expr.Instance(parser, exprs);
             return new InstancedClass<ParseResult>(exprIndex, this.func, this.error, parser, thisIndex);
@@ -90,17 +91,18 @@ namespace PEGer
                 this.error = error;
             }
 
-            protected override TResult ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+            protected override Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
             {
                 var start = index;
-                try
+                var ret = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
+                if(ret.TryGet(out var obj)&&obj is T value)
                 {
-                    return this.func((T)this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo));
+                    return Expected<ParsingException>.Success(this.func(value));
                 }
-                catch (ParsingException)
+                else
                 {
                     index = start;
-                    return this.error();
+                    return Expected<ParsingException>.Success(this.error());
                 }
             }
         }

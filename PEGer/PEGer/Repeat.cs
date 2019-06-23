@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -132,7 +134,7 @@ namespace PEGer
             return hashCode;
         }
 
-        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override InstanceBase<TResult, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var exprIndex = this.expr.Instance(parser, exprs);
             return new InstancedClass<ParseResult>(exprIndex, this.func, this.minCount, this.maxCount, this.error, parser, thisIndex);
@@ -155,35 +157,41 @@ namespace PEGer
                 this.error = error;
             }
 
-            protected override TResult ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+            protected override Expected<TResult,ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
             {
                 var list = new List<T>();
                 var start = index;
                 var now = start;
-                try
+                while (list.Count < this.maxCount)
                 {
-                    while (list.Count < this.maxCount)
+                    now = index;
+                    var val = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
+                    if (val.TryGet(out var obj) && obj is T value)
                     {
-                        now = index;
-                        list.Add((T)this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo));
+                        list.Add(value);
+                    }
+                    else
+                    {
+                        index = now;
+                        break;
                     }
                 }
-                catch (ParsingException)
+                if (list.Count < this.minCount)
                 {
-                    index = now;
-                    if (list.Count < this.minCount)
+                    index = start;
+                    if(this.error is null)
                     {
-                        if (this.error is null)
-                        {
-                            throw new ParsingException(start, new ArgumentOutOfRangeException($"Repetition count is few(it must be more than or equal to {this.minCount})"));
-                        }
-                        else
-                        {
-                            throw new ParsingException(start, this.error(list.Count));
-                        }
+                        return Failure<TResult>(new ParsingException(now, new ArgumentOutOfRangeException($"Number of repetition is few (it must be more than or equal to {this.minCount})")));
+                    }
+                    else
+                    {
+                        return Failure<TResult>(new ParsingException(now, this.error(list.Count)));
                     }
                 }
-                return this.func(list);
+                else
+                {
+                    return Success(this.func(list));
+                }
             }
         }
     }

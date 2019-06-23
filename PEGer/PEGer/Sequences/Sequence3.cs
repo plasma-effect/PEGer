@@ -46,7 +46,7 @@ namespace PEGer
             return hashCode;
         }
 
-        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override InstanceBase<TResult, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var thisExprs = new int[3];
             thisExprs[0] = this.expr1.Instance(parser, exprs);

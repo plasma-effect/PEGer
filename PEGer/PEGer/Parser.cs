@@ -2,6 +2,8 @@
 //This source code is under MIT License. See ./LICENSE
 using System;
 using System.Collections.Generic;
+using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -91,7 +93,7 @@ namespace PEGer
             return hashCode;
         }
 
-        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override InstanceBase<TResult, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             var exprIndex = this.expr.Instance(parser, exprs);
             return new InstanceClass<ParseResult>(exprIndex, this.func, this.error, parser, thisIndex);
@@ -110,23 +112,23 @@ namespace PEGer
                 this.error = error;
             }
 
-            protected override TResult ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+            protected override Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
             {
                 var start = index;
-                try
+                var val = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
+                if(val.TryGet(out var obj) && obj is T value)
                 {
-                    return this.func((T)this.Parser.Instances[this.exprIndex].Parse(str, ref index, exceptions, memo));
+                    return Success(this.func(value));
                 }
-                catch (ParsingException exc)
+                else
                 {
-                    if(this.error is null)
+                    index = start;
+                    var exc = val.GetException();
+                    if(this.error is Func<ParsingException, Exception>)
                     {
-                        throw exc;
+                        exc = new ParsingException(exc.Index, this.error(exc));
                     }
-                    else
-                    {
-                        throw new ParsingException(start, this.error(exc));
-                    }
+                    return Failure<TResult>(exc);
                 }
             }
         }
@@ -155,12 +157,12 @@ namespace PEGer
     /// <typeparam name="TResult">Result Type</typeparam>
     public class Parser<TResult>
     {
-        internal List<IInstancedExpression<TResult>> Instances { get; }
+        internal List<IInstancedExpression> Instances { get; }
         int startIndex;
         bool SpaceIgnore { get; set; }
         internal Parser(ExpressionBase<TResult> initValue)
         {
-            this.Instances = new List<IInstancedExpression<TResult>>();
+            this.Instances = new List<IInstancedExpression>();
             var internalExpr = new List<IExpression>();
             this.startIndex = initValue.Instance(this, internalExpr);
             this.SpaceIgnore = true;
@@ -189,15 +191,25 @@ namespace PEGer
         {
             var index = 0;
             exceptions = new List<ParsingException>();
-            try
+            var value = this[this.startIndex].Parse(str, ref index, exceptions, new MemoDictionary());
+            if (value.TryGet(out var val) && val is TResult v)
             {
-                ret = (TResult)this.Instances[this.startIndex].Parse(str, ref index, exceptions, new MemoDictionary());
-                endPoint = exceptions.Count == 0 ? index : -1;
-                return exceptions.Count == 0;
+                if (exceptions.Count == 0)
+                {
+                    ret = v;
+                    endPoint = index;
+                    return true;
+                }
+                else
+                {
+                    ret = default;
+                    endPoint = -1;
+                    return false;
+                }
             }
-            catch (ParsingException exc)
+            else
             {
-                exceptions.Add(exc);
+                exceptions.Add(value.GetException());
                 ret = default;
                 endPoint = -1;
                 return false;
@@ -223,7 +235,7 @@ namespace PEGer
             return result;
         }
 
-        internal IInstancedExpression<TResult> this[int index]
+        internal IInstancedExpression this[int index]
         {
             get
             {

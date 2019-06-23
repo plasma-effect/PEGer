@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -870,43 +872,45 @@ namespace PEGer
 
     internal class SequenceInstancedClass<TResult, ParseResult> : InstanceBase<TResult, ParseResult>
     {
-        int[] exprs;
+        int[] exprIndexes;
         Func<object[], TResult> func;
         Func<ParsingException, int, Exception> error;
 
-        public SequenceInstancedClass(int[] exprs, Func<object[], TResult> func, Func<ParsingException, int, Exception> error, Parser<ParseResult> parser, int thisIndex) : base(parser, thisIndex)
+        public SequenceInstancedClass(int[] exprIndexes, Func<object[], TResult> func, Func<ParsingException, int, Exception> error, Parser<ParseResult> parser, int thisIndex) : base(parser, thisIndex)
         {
-            this.exprs = exprs;
+            this.exprIndexes = exprIndexes;
             this.func = func;
             this.error = error;
         }
 
-        protected override TResult ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+        protected override Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
         {
             var start = index;
             var eind = -1;
-            try
+            var objes = new object[this.exprIndexes.Length];
+            foreach(var e in this.exprIndexes)
             {
-                var objs = new object[this.exprs.Length];
-                foreach (var e in this.exprs)
+                var now = index;
+                ++eind;
+                var val = this.Parser[e].Parse(str, ref index, exceptions, memo);
+                if (val.TryGet(out var obj))
                 {
-                    ++eind;
-                    objs[eind] = this.Parser[e].Parse(str, ref index, exceptions, memo);
-                }
-                return this.func(objs);
-            }
-            catch(ParsingException exc)
-            {
-                index = start;
-                if(this.error is null)
-                {
-                    throw exc;
+                    objes[eind] = obj;
                 }
                 else
                 {
-                    throw new ParsingException(start, this.error(exc, eind));
+                    index = start;
+                    if(this.error is null)
+                    {
+                        return Failure<TResult>(val.GetException());
+                    }
+                    else
+                    {
+                        return Failure<TResult>(new ParsingException(now, this.error(val.GetException(), eind)));
+                    }
                 }
             }
+            return Success(this.func(objes));
         }
     }
 }

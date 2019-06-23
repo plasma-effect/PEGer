@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using TrueRegex;
 using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -16,77 +17,85 @@ namespace PEGer
     {
         IRegex regex;
         Func<StringView, int, T> func;
+        bool greedy;
         Func<Exception> error;
 
-        private Regex(IRegex regex, Func<StringView, int, T> func, Func<Exception> error)
+        private Regex(IRegex regex, Func<StringView, int, T> func, bool greedy, Func<Exception> error)
         {
             this.regex = regex;
             this.func = func;
+            this.greedy = greedy;
             this.error = error;
         }
 
-        internal override IInstancedExpression<ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
+        internal override InstanceBase<T, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
-            return new InstancedClass<ParseResult>(this.regex, this.func, this.error, parser, thisIndex);
+            return new InstancedClass<ParseResult>(this.regex, this.func, this.greedy, this.error, parser, thisIndex);
         }
 
         internal class InstancedClass<ParseResult> : InstanceBase<T, ParseResult>
         {
             IRegex regex;
             Func<StringView, int, T> func;
+            bool greedy;
             Func<Exception> error;
 
-            public InstancedClass(IRegex regex, Func<StringView, int, T> func,Func<Exception> error, Parser<ParseResult> parser, int thisIndex) : base(parser, thisIndex)
+            public InstancedClass(IRegex regex, Func<StringView, int, T> func, bool greedy, Func<Exception> error, Parser<ParseResult> parser, int thisIndex) : base(parser, thisIndex)
             {
                 this.regex = regex;
                 this.func = func;
+                this.greedy = greedy;
                 this.error = error;
             }
 
-            protected override T ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+            protected override Expected<T,ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
             {
                 var view = new StringView(str).Substring(index);
-                if (this.regex.LastMatch(view) is int length)
+                Func<IEnumerable<char>, int?> match = this.regex.FirstMatch;
+                if (this.greedy)
+                {
+                    match = this.regex.LastMatch;
+                }
+                if (match(view) is int length)
                 {
                     var ret = this.func(view.Substring(0, length), index);
                     index += length;
-                    return ret;
+                    return Success(ret);
                 }
                 else
                 {
-                    if (this.error is null)
-                    {
-                        throw new ParsingException(index, new ArgumentException("the string didn't match the regex."));
-                    }
-                    else
-                    {
-                        throw new ParsingException(index, this.error());
-                    }
+                    return Failure<T>(new ParsingException(index, this.error()));
                 }
             }
         }
-
-        /// <summary>
-        /// Create Regex
-        /// </summary>
-        /// <param name="regex">Regular Expression</param>
-        /// <param name="func">Transform Function</param>
-        /// <returns>Expression</returns>
-        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func)
+        private static ArgumentException DefaultError()
         {
-            return new Regex<T>(regex, func, null);
+            return new ArgumentException("the string didn't match the regex.");
         }
 
         /// <summary>
-        /// Create Regex with Custom Exception
+        /// Create Regex Expression
+        /// </summary>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, bool greedy = true)
+        {
+            return new Regex<T>(regex, func, greedy, DefaultError);
+        }
+
+        /// <summary>
+        /// Create Regex Expression with Custom Exception
         /// </summary>
         /// <param name="regex">Regular Expression</param>
         /// <param name="func">Transform Function</param>
         /// <param name="error">Function that return Custom Exception</param>
-        /// <returns>Expression</returns>
-        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, Func<Exception> error)
+        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, Func<Exception> error, bool greedy = true)
         {
-            return new Regex<T>(regex, func, error);
+            return new Regex<T>(regex, func, greedy, error);
         }
 
         public override bool Equals(object obj)
@@ -94,14 +103,16 @@ namespace PEGer
             return obj is Regex<T> regex &&
                    EqualityComparer<IRegex>.Default.Equals(this.regex, regex.regex) &&
                    EqualityComparer<Func<StringView, int, T>>.Default.Equals(this.func, regex.func) &&
+                   this.greedy == regex.greedy &&
                    EqualityComparer<Func<Exception>>.Default.Equals(this.error, regex.error);
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 942585704;
+            var hashCode = 2120474785;
             hashCode = hashCode * -1521134295 + EqualityComparer<IRegex>.Default.GetHashCode(this.regex);
             hashCode = hashCode * -1521134295 + EqualityComparer<Func<StringView, int, T>>.Default.GetHashCode(this.func);
+            hashCode = hashCode * -1521134295 + this.greedy.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<Func<Exception>>.Default.GetHashCode(this.error);
             return hashCode;
         }
@@ -113,25 +124,26 @@ namespace PEGer
     public static class Regex
     {
         /// <summary>
-        /// Create Regex
+        /// Create Simple Regex Expression
         /// </summary>
         /// <param name="regex">Regular Expression</param>
-        /// <returns>Expression</returns>
-        public static Regex<string> Create(IRegex regex)
+        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<string> Create(IRegex regex, bool greedy = true)
         {
-            return Regex<string>.Create(regex, (view, _) => view.ToString());
+            return Regex<string>.Create(regex, (view, _) => view.ToString(), greedy);
         }
 
         /// <summary>
-        /// Create Regex with Custom Exception
+        /// Create Simple Regex Expression with Custom Exception
         /// </summary>
         /// <param name="regex">Regular Expression</param>
         /// <param name="error">Function that return Custom Exception</param>
-        /// <returns>Expression</returns>
-        public static Regex<string> Create(IRegex regex,Func<Exception> error)
+        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<string> Create(IRegex regex, Func<Exception> error, bool greedy = true)
         {
-            return Regex<string>.Create(regex, (view, _) => view.ToString(), error);
+            return Regex<string>.Create(regex, (view, _) => view.ToString(), error, greedy);
         }
     }
-
 }
