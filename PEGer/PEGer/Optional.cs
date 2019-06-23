@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
@@ -97,12 +98,12 @@ namespace PEGer
                 var ret = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
                 if(ret.TryGet(out var obj)&&obj is T value)
                 {
-                    return Expected<ParsingException>.Success(this.func(value));
+                    return Success(this.func(value));
                 }
                 else
                 {
                     index = start;
-                    return Expected<ParsingException>.Success(this.error());
+                    return Success(this.error());
                 }
             }
         }

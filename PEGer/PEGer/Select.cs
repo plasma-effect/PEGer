@@ -1691,8 +1691,11 @@ namespace PEGer
                 {
                     return Success(this.funcs[i](obj));
                 }
+                else
+                {
+                    selectExceptions[i] = val.GetException();
+                }
             }
-            index = start;
             if(this.error is null)
             {
                 exceptions.AddRange(selectExceptions);

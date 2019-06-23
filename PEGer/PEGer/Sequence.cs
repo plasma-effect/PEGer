@@ -888,7 +888,8 @@ namespace PEGer
             var start = index;
             var eind = -1;
             var objes = new object[this.exprIndexes.Length];
-            foreach(var e in this.exprIndexes)
+            var @continue = false;
+            foreach (var e in this.exprIndexes)
             {
                 var now = index;
                 ++eind;
@@ -897,10 +898,14 @@ namespace PEGer
                 {
                     objes[eind] = obj;
                 }
+                else if (val.GetException() is Continue.ContinueException exc)
+                {
+                    @continue = true;
+                    exceptions.Add(exc);
+                }
                 else
                 {
-                    index = start;
-                    if(this.error is null)
+                    if (this.error is null)
                     {
                         return Failure<TResult>(val.GetException());
                     }
@@ -910,7 +915,14 @@ namespace PEGer
                     }
                 }
             }
-            return Success(this.func(objes));
+            if (@continue)
+            {
+                return Failure<TResult>(new Continue.ContinueException(index, new Continue.ContinueExceptionTag()));
+            }
+            else
+            {
+                return Success(this.func(objes));
+            }
         }
     }
 }

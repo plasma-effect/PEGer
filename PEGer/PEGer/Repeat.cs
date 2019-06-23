@@ -162,6 +162,7 @@ namespace PEGer
                 var list = new List<T>();
                 var start = index;
                 var now = start;
+                var @continue = false;
                 while (list.Count < this.maxCount)
                 {
                     now = index;
@@ -170,15 +171,23 @@ namespace PEGer
                     {
                         list.Add(value);
                     }
+                    else if(val.GetException() is Continue.ContinueException exc)
+                    {
+                        @continue = true;
+                        exceptions.Add(exc);
+                    }
                     else
                     {
                         index = now;
                         break;
                     }
+                    if (index == now)
+                    {
+                        break;
+                    }
                 }
                 if (list.Count < this.minCount)
                 {
-                    index = start;
                     if(this.error is null)
                     {
                         return Failure<TResult>(new ParsingException(now, new ArgumentOutOfRangeException($"Number of repetition is few (it must be more than or equal to {this.minCount})")));
@@ -187,6 +196,10 @@ namespace PEGer
                     {
                         return Failure<TResult>(new ParsingException(now, this.error(list.Count)));
                     }
+                }
+                else if(@continue)
+                {
+                    return Failure<TResult>(new Continue.ContinueException(now, new Continue.ContinueExceptionTag()));
                 }
                 else
                 {

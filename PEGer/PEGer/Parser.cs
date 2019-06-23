@@ -2,6 +2,7 @@
 //This source code is under MIT License. See ./LICENSE
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UtilityLibrary;
 using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
@@ -122,7 +123,6 @@ namespace PEGer
                 }
                 else
                 {
-                    index = start;
                     var exc = val.GetException();
                     if(this.error is Func<ParsingException, Exception>)
                     {
@@ -187,7 +187,7 @@ namespace PEGer
         /// <param name="exceptions">Parsing Errors</param>
         /// <param name="endPoint">Stop Point (if Parsing Action succeeded) or -1 (otherwise)</param>
         /// <returns>Whether It Succeeded</returns>
-        public bool Parse(string str, out TResult ret, out List<ParsingException> exceptions,out int endPoint)
+        public bool Parse(string str, out TResult ret, out List<ParsingException> exceptions, out int endPoint)
         {
             var index = 0;
             exceptions = new List<ParsingException>();
@@ -204,7 +204,6 @@ namespace PEGer
                 {
                     ret = default;
                     endPoint = -1;
-                    return false;
                 }
             }
             else
@@ -212,8 +211,9 @@ namespace PEGer
                 exceptions.Add(value.GetException());
                 ret = default;
                 endPoint = -1;
-                return false;
             }
+            exceptions = exceptions.Where(exc => !(exc.Exception is Continue.ContinueExceptionTag)).ToList();
+            return false;
         }
 
         /// <summary>
@@ -226,6 +226,7 @@ namespace PEGer
         public bool ParseFullMatch(string str, out TResult ret, out List<ParsingException> exceptions)
         {
             var result = Parse(str, out ret, out exceptions, out var end);
+            SpaceSkip(str, ref end);
             if (result && end != str.Length)
             {
                 exceptions.Add(new ParsingException(end, new DontReachEndOfStringException()));
