@@ -3,13 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static PEGer.Utility;
 
 namespace PEGer
 {
     public class Select<T1, T2, TResult> : ExpressionBase<TResult>
     {
-        ExpressionBase<T1> expr1;
-        ExpressionBase<T2> expr2;
+        protected ExpressionBase<T1> expr1;
+        protected ExpressionBase<T2> expr2;
         Func<T1, TResult> func1;
         Func<T2, TResult> func2;
         Func<ParsingException, ParsingException, Exception> error;
@@ -59,6 +60,31 @@ namespace PEGer
             exprIndexes[1] = this.expr2.Instance(parser, exprs);
             funcs[1] = (obj) => this.func2((T2)obj);
             return new SelectInstancedClass<TResult, ParseResult>(exprIndexes, funcs, error, parser, thisIndex);
+        }
+    }
+
+    public class EqualSelect2<T> : Select<T, T, T>
+    {
+        public EqualSelect2(ExpressionBase<T> expr1, ExpressionBase<T> expr2, Func<T, T> func1, Func<T, T> func2, Func<ParsingException, ParsingException, Exception> error) : base(expr1, expr2, func1, func2, error)
+        {
+
+        }
+
+        public Select<T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<ParsingException, ParsingException, Exception> error)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, func1, func2, error);
+        }
+        public Select<T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, func1, func2);
+        }
+        public Select<T, T, T> Change(Func<ParsingException, ParsingException, Exception> error)
+        {
+            return Select<T>.Create(this.expr1, this.expr2, error);
+        }
+        public static EqualSelect3<T> operator |(EqualSelect2<T> lhs, ExpressionBase<T> rhs)
+        {
+            return new EqualSelect3<T>(lhs.expr1, lhs.expr2, rhs, Echo, Echo, Echo, null);
         }
     }
 }

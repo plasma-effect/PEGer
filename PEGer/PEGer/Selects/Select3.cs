@@ -3,14 +3,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static PEGer.Utility;
 
 namespace PEGer
 {
     public class Select<T1, T2, T3, TResult> : ExpressionBase<TResult>
     {
-        ExpressionBase<T1> expr1;
-        ExpressionBase<T2> expr2;
-        ExpressionBase<T3> expr3;
+        protected ExpressionBase<T1> expr1;
+        protected ExpressionBase<T2> expr2;
+        protected ExpressionBase<T3> expr3;
 
         Func<T1, TResult> func1;
         Func<T2, TResult> func2;
@@ -74,6 +75,31 @@ namespace PEGer
             funcs[2] = (obj) => this.func3((T3)obj);
 
             return new SelectInstancedClass<TResult, ParseResult>(exprIndexes, funcs, error, parser, thisIndex);
+        }
+    }
+
+    public class EqualSelect3<T> : Select<T, T, T, T>
+    {
+        public EqualSelect3(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, func1, func2, func3, error)
+        {
+
+        }
+
+        public Select<T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<ParsingException, ParsingException, ParsingException, Exception> error)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3, error);
+        }
+        public Select<T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3);
+        }
+        public Select<T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, Exception> error)
+        {
+            return Select<T>.Create(this.expr1, this.expr2, this.expr3, error);
+        }
+        public static EqualSelect4<T> operator |(EqualSelect3<T> lhs, ExpressionBase<T> rhs)
+        {
+            return new EqualSelect4<T>(lhs.expr1, lhs.expr2, lhs.expr3, rhs, Echo, Echo, Echo, Echo, null);
         }
     }
 }

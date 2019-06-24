@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContinueTest.cs" />
+    <Compile Include="OperatorTest.cs" />
     <Compile Include="OptionalTest.cs" />
     <Compile Include="PredicateTest.cs" />
     <Compile Include="RecursiveTest.cs" />

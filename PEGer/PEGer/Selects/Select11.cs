@@ -3,22 +3,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static PEGer.Utility;
 
 namespace PEGer
 {
     public class Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> : ExpressionBase<TResult>
     {
-        ExpressionBase<T1> expr1;
-        ExpressionBase<T2> expr2;
-        ExpressionBase<T3> expr3;
-        ExpressionBase<T4> expr4;
-        ExpressionBase<T5> expr5;
-        ExpressionBase<T6> expr6;
-        ExpressionBase<T7> expr7;
-        ExpressionBase<T8> expr8;
-        ExpressionBase<T9> expr9;
-        ExpressionBase<T10> expr10;
-        ExpressionBase<T11> expr11;
+        protected ExpressionBase<T1> expr1;
+        protected ExpressionBase<T2> expr2;
+        protected ExpressionBase<T3> expr3;
+        protected ExpressionBase<T4> expr4;
+        protected ExpressionBase<T5> expr5;
+        protected ExpressionBase<T6> expr6;
+        protected ExpressionBase<T7> expr7;
+        protected ExpressionBase<T8> expr8;
+        protected ExpressionBase<T9> expr9;
+        protected ExpressionBase<T10> expr10;
+        protected ExpressionBase<T11> expr11;
 
         Func<T1, TResult> func1;
         Func<T2, TResult> func2;
@@ -154,6 +155,31 @@ namespace PEGer
             funcs[10] = (obj) => this.func11((T11)obj);
 
             return new SelectInstancedClass<TResult, ParseResult>(exprIndexes, funcs, error, parser, thisIndex);
+        }
+    }
+
+    public class EqualSelect11<T> : Select<T, T, T, T, T, T, T, T, T, T, T, T>
+    {
+        public EqualSelect11(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, ExpressionBase<T> expr5, ExpressionBase<T> expr6, ExpressionBase<T> expr7, ExpressionBase<T> expr8, ExpressionBase<T> expr9, ExpressionBase<T> expr10, ExpressionBase<T> expr11, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<T, T> func4, Func<T, T> func5, Func<T, T> func6, Func<T, T> func7, Func<T, T> func8, Func<T, T> func9, Func<T, T> func10, Func<T, T> func11, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8, expr9, expr10, expr11, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, error)
+        {
+
+        }
+
+        public Select<T, T, T, T, T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7, Func<T, TResult> func8, Func<T, TResult> func9, Func<T, TResult> func10, Func<T, TResult> func11, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, error);
+        }
+        public Select<T, T, T, T, T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7, Func<T, TResult> func8, Func<T, TResult> func9, Func<T, TResult> func10, Func<T, TResult> func11)
+        {
+            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11);
+        }
+        public Select<T, T, T, T, T, T, T, T, T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
+        {
+            return Select<T>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, error);
+        }
+        public static EqualSelect12<T> operator |(EqualSelect11<T> lhs, ExpressionBase<T> rhs)
+        {
+            return new EqualSelect12<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, lhs.expr5, lhs.expr6, lhs.expr7, lhs.expr8, lhs.expr9, lhs.expr10, lhs.expr11, rhs, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, null);
         }
     }
 }

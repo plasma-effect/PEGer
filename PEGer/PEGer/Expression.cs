@@ -6,6 +6,7 @@ using System.Text;
 using UtilityLibrary;
 using static UtilityLibrary.Expected<PEGer.ParsingException>;
 using static UtilityLibrary.IntegerEnumerable;
+using static PEGer.Utility;
 
 namespace PEGer
 {
@@ -48,6 +49,11 @@ namespace PEGer
         public static Repeat<T, List<T>> operator ~(ExpressionBase<T> expr)
         {
             return Repeat.Create(expr);
+        }
+
+        public static EqualSelect2<T> operator|(ExpressionBase<T> lhs, ExpressionBase<T> rhs)
+        {
+            return new EqualSelect2<T>(lhs, rhs, Echo, Echo, null);
         }
     }
 
