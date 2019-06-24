@@ -26,4 +26,12 @@ namespace PEGer
         }
     }
 
+    public class ReachEndOfStringException : Exception
+    {
+        public ReachEndOfStringException() : base("reach end of string")
+        {
+
+        }
+    }
+
 }

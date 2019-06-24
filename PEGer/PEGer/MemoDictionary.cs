@@ -3,45 +3,38 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UtilityLibrary;
 
 namespace PEGer
 {
     internal class MemoDictionary
     {
-        SortedDictionary<int, object> memo;
-        public bool TryGet<T>(int dim0, int dim1, out int index, out T ret)
+        SortedDictionary<int, SortedDictionary<int, (int Index, Expected<object, ParsingException> Value)>> memo;
+        public bool TryGet(int dim0, int dim1, out int index, out Expected<object, ParsingException> value)
         {
-            if (this.memo.ContainsKey(dim0) &&
-                this.memo[dim0] is SortedDictionary<int, (int, T)> dict &&
-                dict.ContainsKey(dim1))
+            if (this.memo.ContainsKey(dim0) && this.memo[dim0].ContainsKey(dim1))
             {
-                var (i, r) = dict[dim1];
-                index = i;
-                ret = r;
+                (index, value) = this.memo[dim0][dim1];
                 return true;
             }
             else
             {
-                index = -1;
-                ret = default;
+                (index, value) = (-1, default);
                 return false;
             }
         }
-        public void Add<T>(int dim0, int dim1, int index, T value)
+        public void Add(int dim0, int dim1, int index, Expected<object,ParsingException> value)
         {
             if (!this.memo.ContainsKey(dim0))
             {
-                this.memo[dim0] = new SortedDictionary<int, (int, T)>();
+                this.memo[dim0] = new SortedDictionary<int, (int Index, Expected<object, ParsingException> Value)>();
             }
-            if (this.memo[dim0] is SortedDictionary<int, (int, T)> dict)
-            {
-                dict[dim1] = (index, value);
-            }
+            this.memo[dim0][dim1] = (index, value);
         }
 
         public MemoDictionary()
         {
-            this.memo = new SortedDictionary<int, object>();
+            this.memo = new SortedDictionary<int, SortedDictionary<int, (int Index, Expected<object, ParsingException> Value)>>();
         }
     }
 }

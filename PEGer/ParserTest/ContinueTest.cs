@@ -10,9 +10,9 @@ namespace ParserTest
     [TestClass]
     public class ContinueTest
     {
-        static Regex<string> first = Regex.Create(String.Create("123"));
-        static Regex<string> second = Regex.Create(String.Create("456"));
-        static Regex<string> third = Regex.Create(String.Create("789"));
+        static String<string> first = "123".ToExpr();
+        static String<string> second = "456".ToExpr();
+        static String<string> third = "789".ToExpr();
         [TestMethod]
         public void SequenceTest()
         {

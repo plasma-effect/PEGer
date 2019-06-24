@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UtilityLibrary;
+using static UtilityLibrary.Expected<PEGer.ParsingException>;
 using static UtilityLibrary.IntegerEnumerable;
 
 namespace PEGer
@@ -43,6 +44,11 @@ namespace PEGer
             parser[ret] = InstanceImplement(parser, exprs, ret);
             return ret;
         }
+
+        public static Repeat<T, List<T>> operator ~(ExpressionBase<T> expr)
+        {
+            return Repeat.Create(expr);
+        }
     }
 
     internal interface IInstancedExpression
@@ -64,25 +70,21 @@ namespace PEGer
         protected abstract Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo);
         public Expected<object, ParsingException> Parse(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
         {
-            if (memo.TryGet<TResult>(this.Index, index, out var next, out var ret))
+            this.Parser.SpaceSkip(str, ref index);
+            if (memo.TryGet(this.Index, index, out var next, out var value))
             {
                 index = next;
-                return Expected<ParsingException>.Success<object>(ret);
+                return value;
             }
             else
             {
                 var start = index;
-                this.Parser.SpaceSkip(str, ref index);
                 var val = ParseImplementation(str, ref index, exceptions, memo);
-                if (val.TryGet(out var value))
-                {
-                    memo.Add(this.Index, start, index, value);
-                    return Expected<ParsingException>.Success<object>(value);
-                }
-                else
-                {
-                    return Expected<ParsingException>.Failure<object>(val.GetException());
-                }
+                var ret = val.TryGet(out var result) ?
+                    Success<object>(result) :
+                    Failure<object>(val.GetException());
+                memo.Add(this.Index, start, index, ret);
+                return ret;
             }
         }
     }

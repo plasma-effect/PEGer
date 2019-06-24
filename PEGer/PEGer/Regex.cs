@@ -145,5 +145,16 @@ namespace PEGer
         {
             return Regex<string>.Create(regex, (view, _) => view.ToString(), error, greedy);
         }
+
+        /// <summary>
+        /// Transform Regex to Regex Expression
+        /// </summary>
+        /// <param name="regex">Base Regex</param>
+        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<string> ToExpr(this IRegex regex, bool greedy = true)
+        {
+            return Create(regex, greedy);
+        }
     }
 }

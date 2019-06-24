@@ -24,8 +24,7 @@ namespace ParserTest
         public void RepeatTest1()
         {
             var rep = Repeat<int>.Create(regex, Sum);
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 10);
@@ -40,8 +39,7 @@ namespace ParserTest
         public void RepeatTest2()
         {
             var rep = Repeat<int>.Create(regex, Sum, 2);
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 10);
@@ -57,8 +55,7 @@ namespace ParserTest
         public void RepeatTest3()
         {
             var rep = Repeat<int>.Create(regex, Sum, 2, 3);
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 6);
@@ -74,8 +71,7 @@ namespace ParserTest
         public void RepeatTest4()
         {
             var rep = Repeat<int>.Create(regex, Sum, _ => new Exception("Test"));
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 10);
@@ -90,8 +86,7 @@ namespace ParserTest
         public void RepeatTest5()
         {
             var rep = Repeat<int>.Create(regex, Sum, 2, _ => new Exception("Test"));
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 10);
@@ -107,8 +102,7 @@ namespace ParserTest
         public void RepeatTest6()
         {
             var rep = Repeat<int>.Create(regex, Sum, 2, 3, _ => new Exception("Test"));
-            var value = Value.Create(rep);
-            var parser = Parser.Create(value);
+            var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
                 Assert.AreEqual(ret, 6);

@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="ContinueTest.cs" />
     <Compile Include="OptionalTest.cs" />
+    <Compile Include="PredicateTest.cs" />
+    <Compile Include="RecursiveTest.cs" />
     <Compile Include="RegexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeatTest.cs" />
