@@ -49,7 +49,7 @@ namespace PEGer
         /// <param name="func">Transform Function</param>
         /// <param name="error">Function that return Custom Exception</param>
         /// <returns>String Expression</returns>
-        public static String<TResult> Create(string str,Func<int,TResult> func,Func<int,Exception> error)
+        public static String<TResult> Create(string str, Func<int, TResult> func, Func<int, Exception> error)
         {
             return new String<TResult>(str, func, error);
         }
@@ -81,7 +81,7 @@ namespace PEGer
         /// <param name="str">Target String</param>
         /// <param name="error">Function that return Custom Exception</param>
         /// <returns>String Expression</returns>
-        public static String<string> Create(string str,Func<int,Exception> error)
+        public static String<string> Create(string str, Func<int, Exception> error)
         {
             return new String<string>(str, _ => str, error);
         }
@@ -94,6 +94,31 @@ namespace PEGer
         public static String<string> ToExpr(this string str)
         {
             return Create(str);
+        }
+
+        /// <summary>
+        /// Transform String to String Expression with Transform Function
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="str">Base String</param>
+        /// <param name="func">Transform Function</param>
+        /// <returns>String Expression</returns>
+        public static String<T> ToExpr<T>(this string str,Func<int,T> func)
+        {
+            return String<T>.Create(str, func);
+        }
+
+        /// <summary>
+        /// Transform String to String Expression with Transform Function and Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="str">Base String</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <returns>String Expression</returns>
+        public static String<T> ToExpr<T>(this string str, Func<int, T> func, Func<int, Exception> error)
+        {
+            return String<T>.Create(str, func, error);
         }
     }
 
@@ -113,7 +138,7 @@ namespace PEGer
         protected override Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
         {
             var start = index;
-            foreach(var i in Range(this.str.Length))
+            foreach (var i in Range(this.str.Length))
             {
                 if (index == str.Length)
                 {

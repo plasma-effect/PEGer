@@ -12,7 +12,7 @@ namespace ParserTest
     public class SequenceTest
     {
         static Regex<int> number = Regex<int>.Create(Number, (view, _) => int.Parse(view.ToString()));
-        static Regex<string> plus = Regex.Create(Predefined.String.Create("+"));
+        static String<string> plus = "+".ToExpr();
 
         static int SumParams(params int[] vs)
         {

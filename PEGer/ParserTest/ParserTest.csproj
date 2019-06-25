@@ -65,6 +65,7 @@
     <Compile Include="RepeatTest.cs" />
     <Compile Include="SelectTest.cs" />
     <Compile Include="SequenceTest.cs" />
+    <Compile Include="StringTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PEGer\PEGer.csproj">

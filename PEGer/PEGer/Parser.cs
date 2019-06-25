@@ -8,6 +8,13 @@ using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
+    public interface IParser<TResult>
+    {
+        bool Parse(string str, out TResult ret, out List<ParsingException> exceptions, out int endPoint);
+        bool ParseFullMatch(string str, out TResult ret, out List<ParsingException> exceptions);
+    }
+
+
     /// <summary>
     /// Static Class for Create Parser
     /// </summary>
@@ -30,11 +37,11 @@ namespace PEGer
     /// Parser Type
     /// </summary>
     /// <typeparam name="TResult">Result Type</typeparam>
-    public class Parser<TResult>
+    public class Parser<TResult> : IParser<TResult>
     {
         internal List<IInstancedExpression> Instances { get; }
         int startIndex;
-        bool SpaceIgnore { get; set; }
+        public bool SpaceIgnore { get; set; }
         internal Parser(ExpressionBase<TResult> initValue)
         {
             this.Instances = new List<IInstancedExpression>();
@@ -43,7 +50,7 @@ namespace PEGer
             this.SpaceIgnore = true;
         }
 
-        internal void SpaceSkip(string str,ref int index)
+        internal void SpaceSkip(string str, ref int index)
         {
             if (this.SpaceIgnore)
             {

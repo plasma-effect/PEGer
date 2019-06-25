@@ -129,9 +129,9 @@ namespace PEGer
         /// <param name="regex">Regular Expression</param>
         /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
         /// <returns>Regex Expression</returns>
-        public static Regex<string> Create(IRegex regex, bool greedy = true)
+        public static Regex<StringView> Create(IRegex regex, bool greedy = true)
         {
-            return Regex<string>.Create(regex, (view, _) => view.ToString(), greedy);
+            return Regex<StringView>.Create(regex, (view, _) => view, greedy);
         }
 
         /// <summary>
@@ -141,9 +141,9 @@ namespace PEGer
         /// <param name="error">Function that return Custom Exception</param>
         /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
         /// <returns>Regex Expression</returns>
-        public static Regex<string> Create(IRegex regex, Func<Exception> error, bool greedy = true)
+        public static Regex<StringView> Create(IRegex regex, Func<Exception> error, bool greedy = true)
         {
-            return Regex<string>.Create(regex, (view, _) => view.ToString(), error, greedy);
+            return Regex<StringView>.Create(regex, (view, _) => view, error, greedy);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace PEGer
         /// <param name="regex">Base Regex</param>
         /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
         /// <returns>Regex Expression</returns>
-        public static Regex<string> ToExpr(this IRegex regex, bool greedy = true)
+        public static Regex<StringView> ToExpr(this IRegex regex, bool greedy = true)
         {
             return Create(regex, greedy);
         }

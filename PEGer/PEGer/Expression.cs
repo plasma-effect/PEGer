@@ -30,7 +30,7 @@ namespace PEGer
         int Instance<T>(Parser<T> parser, List<IExpression> exprs);
     }
 
-    public abstract class ExpressionBase<T> : IExpression
+    public abstract class ExpressionBase<T> : IExpression,IParser<T>
     {
         internal abstract InstanceBase<T, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex);
         public int Instance<TResult>(Parser<TResult> parser, List<IExpression> exprs)
@@ -46,6 +46,7 @@ namespace PEGer
             return ret;
         }
 
+
         public static Repeat<T, List<T>> operator ~(ExpressionBase<T> expr)
         {
             return Repeat.Create(expr);
@@ -54,6 +55,31 @@ namespace PEGer
         public static EqualSelect2<T> operator|(ExpressionBase<T> lhs, ExpressionBase<T> rhs)
         {
             return new EqualSelect2<T>(lhs, rhs, Echo, Echo, null);
+        }
+
+        private Parser<T> parser;
+
+        protected ExpressionBase()
+        {
+            this.parser = null;
+        }
+
+        public bool Parse(string str, out T ret, out List<ParsingException> exceptions, out int endPoint)
+        {
+            if(this.parser is null)
+            {
+                this.parser = Parser.Create(this);
+            }
+            return this.parser.Parse(str, out ret, out exceptions, out endPoint);
+        }
+
+        public bool ParseFullMatch(string str, out T ret, out List<ParsingException> exceptions)
+        {
+            if(this.parser is null)
+            {
+                this.parser = Parser.Create(this);
+            }
+            return this.parser.ParseFullMatch(str, out ret, out exceptions);
         }
     }
 

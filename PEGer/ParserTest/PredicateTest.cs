@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PEGer;
 using TrueRegex;
+using UtilityLibrary;
 using static TrueRegex.Predefined;
 
 namespace ParserTest
@@ -11,7 +12,7 @@ namespace ParserTest
     [TestClass]
     public class PredicateTest
     {
-        static ExpressionBase<string> baseExpr = Regex.Create(Number);
+        static ExpressionBase<StringView> baseExpr = Regex.Create(Number);
         static Exception TestCustomException(int index)
         {
             return new Exception($"error: {index}");
@@ -24,7 +25,7 @@ namespace ParserTest
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("123", out var ret, out _, out var end));
-                Assert.AreEqual("123", ret);
+                Assert.AreEqual("123", ret.ToString());
                 Assert.AreEqual(end, 0);
             }
             {
