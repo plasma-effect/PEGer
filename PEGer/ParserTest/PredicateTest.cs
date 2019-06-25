@@ -67,7 +67,7 @@ namespace ParserTest
         [TestMethod]
         public void NotPredicateTest3()
         {
-            var expr = NotPredicate<int>.Create(baseExpr, (index) => index + 1);
+            var expr = NotPredicate.Create(baseExpr, (index) => index + 1);
             var parser = Parser.Create(expr);
             {
                 Assert.IsFalse(parser.Parse("123", out _, out _, out _));
@@ -82,7 +82,7 @@ namespace ParserTest
         [TestMethod]
         public void NotPredicateTest4()
         {
-            var expr = NotPredicate<int>.Create(baseExpr, (index) => index + 1, TestCustomException);
+            var expr = NotPredicate.Create(baseExpr, (index) => index + 1, TestCustomException);
             var parser = Parser.Create(expr);
             {
                 Assert.IsFalse(parser.Parse("123", out _, out var exceptions, out _));

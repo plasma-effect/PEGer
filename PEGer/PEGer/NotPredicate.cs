@@ -19,6 +19,33 @@ namespace PEGer
         }
 
         /// <summary>
+        /// Create NotPredicate Expression
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Function that return value when the parsing fails</param>
+        /// <returns>NotPredicate Function</returns>
+        public static NotPredicate<T, TResult> Create<T, TResult>(ExpressionBase<T> expr, Func<int, TResult> failure)
+        {
+            return new NotPredicate<T, TResult>(expr, failure, NotPredicate.DefaultException);
+        }
+
+        /// <summary>
+        /// Create NotPredicate Expression with Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Function that return value when the parsing fails</param>
+        /// <param name="error">Function that return Custom Exception when the parsing succeed</param>
+        /// <returns>NotPredicate Function</returns>
+        public static NotPredicate<T, TResult> Create<T, TResult>(ExpressionBase<T> expr, Func<int, TResult> failure, Func<int, Exception> error)
+        {
+            return new NotPredicate<T, TResult>(expr, failure, error);
+        }
+
+        /// <summary>
         /// Create NotPredicate Expression with constant Return Value
         /// </summary>
         /// <typeparam name="T">Target Expression Return Type</typeparam>
@@ -43,38 +70,6 @@ namespace PEGer
         public static NotPredicate<T, TResult> Create<T, TResult>(ExpressionBase<T> expr, TResult failure, Func<int, Exception> error)
         {
             return new NotPredicate<T, TResult>(expr, (_) => failure, error);
-        }
-    }
-
-    /// <summary>
-    /// NotPredicate Expression (if parsing by expr fails, this parsing succeed)
-    /// </summary>
-    /// <typeparam name="TResult">NotPredicate Expression Return Type</typeparam>
-    public static class NotPredicate<TResult>
-    {
-        /// <summary>
-        /// Create NotPredicate Expression
-        /// </summary>
-        /// <typeparam name="T">Target Expression Return Type</typeparam>
-        /// <param name="expr">Target Expression</param>
-        /// <param name="failure">Function that return value when the parsing fails</param>
-        /// <returns>NotPredicate Function</returns>
-        public static NotPredicate<T,TResult> Create<T>(ExpressionBase<T> expr,Func<int, TResult> failure)
-        {
-            return new NotPredicate<T, TResult>(expr, failure, NotPredicate.DefaultException);
-        }
-
-        /// <summary>
-        /// Create NotPredicate Expression with Custom Exception
-        /// </summary>
-        /// <typeparam name="T">Target Expression Return Type</typeparam>
-        /// <param name="expr">Target Expression</param>
-        /// <param name="failure">Function that return value when the parsing fails</param>
-        /// <param name="error">Function that return Custom Exception when the parsing succeed</param>
-        /// <returns>NotPredicate Function</returns>
-        public static NotPredicate<T,TResult> Create<T>(ExpressionBase<T> expr,Func<int,TResult> failure, Func<int, Exception> error)
-        {
-            return new NotPredicate<T, TResult>(expr, failure, error);
         }
     }
 

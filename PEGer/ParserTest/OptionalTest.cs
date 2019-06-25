@@ -9,11 +9,11 @@ namespace ParserTest
     [TestClass]
     public class OptionalTest
     {
-        static Regex<int> regex = Regex<int>.Create(Number, (view, _) => int.Parse(view.ToString()));
+        static Regex<int> regex = Regex.Create(Number, (view, _) => int.Parse(view.ToString()));
         [TestMethod]
         public void OptionalTest1()
         {
-            var expr = Optional<string>.Create(regex, v => $"success: {v}", () => "failure");
+            var expr = Optional.Create(regex, v => $"success: {v}", () => "failure");
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1", out var ret, out var exceptions, out var end));

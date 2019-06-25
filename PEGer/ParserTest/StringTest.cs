@@ -12,7 +12,7 @@ namespace ParserTest
         [TestMethod]
         public void StringTest1()
         {
-            var expr = String<int>.Create("123", i => i);
+            var expr = String.Create("123", i => i);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("  123", out var ret, out _, out var end));
@@ -27,7 +27,7 @@ namespace ParserTest
         [TestMethod]
         public void StringTest2()
         {
-            var expr = String<int>.Create("123", i => i, v => new System.Exception($"Error: {v}"));
+            var expr = String.Create("123", i => i, v => new System.Exception($"Error: {v}"));
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("  123", out var ret, out _, out var end));

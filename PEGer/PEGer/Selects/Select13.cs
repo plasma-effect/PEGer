@@ -180,26 +180,26 @@ namespace PEGer
 
     public class EqualSelect13<T> : Select<T, T, T, T, T, T, T, T, T, T, T, T, T, T>
     {
-        public EqualSelect13(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, ExpressionBase<T> expr5, ExpressionBase<T> expr6, ExpressionBase<T> expr7, ExpressionBase<T> expr8, ExpressionBase<T> expr9, ExpressionBase<T> expr10, ExpressionBase<T> expr11, ExpressionBase<T> expr12, ExpressionBase<T> expr13, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<T, T> func4, Func<T, T> func5, Func<T, T> func6, Func<T, T> func7, Func<T, T> func8, Func<T, T> func9, Func<T, T> func10, Func<T, T> func11, Func<T, T> func12, Func<T, T> func13, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8, expr9, expr10, expr11, expr12, expr13, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13, error)
+        public EqualSelect13(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, ExpressionBase<T> expr5, ExpressionBase<T> expr6, ExpressionBase<T> expr7, ExpressionBase<T> expr8, ExpressionBase<T> expr9, ExpressionBase<T> expr10, ExpressionBase<T> expr11, ExpressionBase<T> expr12, ExpressionBase<T> expr13, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8, expr9, expr10, expr11, expr12, expr13, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, error)
         {
 
         }
 
         public Select<T, T, T, T, T, T, T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7, Func<T, TResult> func8, Func<T, TResult> func9, Func<T, TResult> func10, Func<T, TResult> func11, Func<T, TResult> func12, Func<T, TResult> func13, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13, error);
         }
         public Select<T, T, T, T, T, T, T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7, Func<T, TResult> func8, Func<T, TResult> func9, Func<T, TResult> func10, Func<T, TResult> func11, Func<T, TResult> func12, Func<T, TResult> func13)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13);
         }
         public Select<T, T, T, T, T, T, T, T, T, T, T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<T>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, this.expr8, this.expr9, this.expr10, this.expr11, this.expr12, this.expr13, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, error);
         }
         public static EqualSelect14<T> operator |(EqualSelect13<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect14<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, lhs.expr5, lhs.expr6, lhs.expr7, lhs.expr8, lhs.expr9, lhs.expr10, lhs.expr11, lhs.expr12, lhs.expr13, rhs, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, null);
+            return new EqualSelect14<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, lhs.expr5, lhs.expr6, lhs.expr7, lhs.expr8, lhs.expr9, lhs.expr10, lhs.expr11, lhs.expr12, lhs.expr13, rhs, null);
         }
     }
 }

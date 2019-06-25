@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PEGer;
+using static TrueRegex.Predefined;
 
 namespace ParserTest
 {
@@ -10,8 +11,7 @@ namespace ParserTest
         [TestMethod]
         public void RegexTest1()
         {
-            var regex = Regex<int>.Create(
-                TrueRegex.Predefined.Number,
+            var regex = Regex.Create(Number,
                 (view, index) => int.Parse(view.ToString()));
             var parser = Parser.Create(regex);
             {
@@ -35,8 +35,7 @@ namespace ParserTest
         [TestMethod]
         public void RegexTest2()
         {
-            var regex = Regex<int>.Create(
-                TrueRegex.Predefined.Number,
+            var regex = Regex.Create(Number,
                 (view, index) => int.Parse(view.ToString()),
                 () => new Exception("Parse Error"));
             var parser = Parser.Create(regex);
@@ -61,7 +60,7 @@ namespace ParserTest
         [TestMethod]
         public void RegexTest3()
         {
-            var regex = Regex.Create(TrueRegex.Predefined.Name);
+            var regex = Regex.Create(Name);
             var parser = Parser.Create(regex);
             {
                 Assert.IsTrue(parser.Parse("abc+", out var ret, out _, out var end));
@@ -81,6 +80,40 @@ namespace ParserTest
             {
                 Assert.IsTrue(parser.Parse("aaaaaa", out var ret, out _, out _));
                 Assert.AreEqual(ret, "aa");
+            }
+        }
+
+        [TestMethod]
+        public void RegexTest5()
+        {
+            var parser = Parser.Create(Number.ToExpr());
+            {
+                Assert.IsTrue(parser.Parse("123", out var ret, out _, out _));
+                Assert.AreEqual(ret.ToString(), "123");
+            }
+        }
+
+        [TestMethod]
+        public void RegexTest6()
+        {
+            var parser = Parser.Create(Number.ToExpr((view, _) => int.Parse(view)));
+            {
+                Assert.IsTrue(parser.Parse("123", out var ret, out _, out _));
+                Assert.AreEqual(ret, 123);
+            }
+        }
+
+        [TestMethod]
+        public void RegexTest7()
+        {
+            var parser = Parser.Create(Number.ToExpr((view, _) => int.Parse(view), () => new Exception("Fails")));
+            {
+                Assert.IsTrue(parser.Parse("123", out var ret, out _, out _));
+                Assert.AreEqual(ret, 123);
+            }
+            {
+                Assert.IsFalse(parser.Parse("abc", out _, out var exceptions, out _));
+                Assert.AreEqual(exceptions[0].Exception.Message, "Fails");
             }
         }
     }

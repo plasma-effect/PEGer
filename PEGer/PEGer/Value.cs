@@ -15,10 +15,12 @@ namespace PEGer
     public class Value<T> : ExpressionBase<T>
     {
         public ExpressionBase<T> Expr { get; set; }
+        private Guid guid;
         
         public Value()
         {
             this.Expr = null;
+            this.guid = Guid.NewGuid();
         }
 
         internal class InstancedClass<ParseResult> : InstanceBase<T, ParseResult>
@@ -47,6 +49,17 @@ namespace PEGer
         internal override InstanceBase<T, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex)
         {
             return new InstancedClass<ParseResult>(this.Expr.Instance(parser, exprs), parser, thisIndex);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Value<T> value &&
+                   this.guid.Equals(value.guid);
+        }
+
+        public override int GetHashCode()
+        {
+            return -1324198676 + EqualityComparer<Guid>.Default.GetHashCode(this.guid);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace PEGer
 
         public static EqualSelect2<T> operator|(ExpressionBase<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect2<T>(lhs, rhs, Echo, Echo, null);
+            return new EqualSelect2<T>(lhs, rhs, null);
         }
 
         private Parser<T> parser;

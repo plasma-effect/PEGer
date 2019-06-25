@@ -65,26 +65,26 @@ namespace PEGer
 
     public class EqualSelect2<T> : Select<T, T, T>
     {
-        public EqualSelect2(ExpressionBase<T> expr1, ExpressionBase<T> expr2, Func<T, T> func1, Func<T, T> func2, Func<ParsingException, ParsingException, Exception> error) : base(expr1, expr2, func1, func2, error)
+        public EqualSelect2(ExpressionBase<T> expr1, ExpressionBase<T> expr2, Func<ParsingException, ParsingException, Exception> error) : base(expr1, expr2, Echo, Echo, error)
         {
 
         }
 
         public Select<T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<ParsingException, ParsingException, Exception> error)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, func1, func2, error);
+            return Select.Create(this.expr1, this.expr2, func1, func2, error);
         }
         public Select<T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, func1, func2);
+            return Select.Create(this.expr1, this.expr2, func1, func2);
         }
         public Select<T, T, T> Change(Func<ParsingException, ParsingException, Exception> error)
         {
-            return Select<T>.Create(this.expr1, this.expr2, error);
+            return Select.Create(this.expr1, this.expr2, Echo, Echo, error);
         }
         public static EqualSelect3<T> operator |(EqualSelect2<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect3<T>(lhs.expr1, lhs.expr2, rhs, Echo, Echo, Echo, null);
+            return new EqualSelect3<T>(lhs.expr1, lhs.expr2, rhs, null);
         }
     }
 }

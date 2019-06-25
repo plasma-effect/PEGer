@@ -20,7 +20,7 @@ namespace PEGer
         bool greedy;
         Func<Exception> error;
 
-        private Regex(IRegex regex, Func<StringView, int, T> func, bool greedy, Func<Exception> error)
+        internal Regex(IRegex regex, Func<StringView, int, T> func, bool greedy, Func<Exception> error)
         {
             this.regex = regex;
             this.func = func;
@@ -39,6 +39,7 @@ namespace PEGer
             Func<StringView, int, T> func;
             bool greedy;
             Func<Exception> error;
+            Func<IEnumerable<char>, int?> match;
 
             public InstancedClass(IRegex regex, Func<StringView, int, T> func, bool greedy, Func<Exception> error, Parser<ParseResult> parser, int thisIndex) : base(parser, thisIndex)
             {
@@ -46,17 +47,17 @@ namespace PEGer
                 this.func = func;
                 this.greedy = greedy;
                 this.error = error;
-            }
-
-            protected override Expected<T,ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
-            {
-                var view = new StringView(str).Substring(index);
-                Func<IEnumerable<char>, int?> match = this.regex.FirstMatch;
+                this.match = this.regex.FirstMatch;
                 if (this.greedy)
                 {
-                    match = this.regex.LastMatch;
+                    this.match = this.regex.LastMatch;
                 }
-                if (match(view) is int length)
+            }
+
+            protected override Expected<T, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+            {
+                var view = new StringView(str).Substring(index);
+                if (this.match(view) is int length)
                 {
                     var ret = this.func(view.Substring(0, length), index);
                     index += length;
@@ -67,35 +68,6 @@ namespace PEGer
                     return Failure<T>(new ParsingException(index, this.error()));
                 }
             }
-        }
-        private static ArgumentException DefaultError()
-        {
-            return new ArgumentException("the string didn't match the regex.");
-        }
-
-        /// <summary>
-        /// Create Regex Expression
-        /// </summary>
-        /// <param name="regex">Regular Expression</param>
-        /// <param name="func">Transform Function</param>
-        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
-        /// <returns>Regex Expression</returns>
-        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, bool greedy = true)
-        {
-            return new Regex<T>(regex, func, greedy, DefaultError);
-        }
-
-        /// <summary>
-        /// Create Regex Expression with Custom Exception
-        /// </summary>
-        /// <param name="regex">Regular Expression</param>
-        /// <param name="func">Transform Function</param>
-        /// <param name="error">Function that return Custom Exception</param>
-        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
-        /// <returns>Regex Expression</returns>
-        public static Regex<T> Create(IRegex regex, Func<StringView, int, T> func, Func<Exception> error, bool greedy = true)
-        {
-            return new Regex<T>(regex, func, greedy, error);
         }
 
         public override bool Equals(object obj)
@@ -123,6 +95,38 @@ namespace PEGer
     /// </summary>
     public static class Regex
     {
+        private static ArgumentException DefaultError()
+        {
+            return new ArgumentException("the string didn't match the regex.");
+        }
+
+        /// <summary>
+        /// Create Regex Expression with Custom Exception
+        /// </summary>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<TResult> Create<TResult>(IRegex regex, Func<StringView, int, TResult> func, Func<Exception> error, bool greedy = true)
+        {
+            return new Regex<TResult>(regex, func, greedy, error);
+        }
+
+        /// <summary>
+        /// Create Regex Expression
+        /// </summary>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="regex">Regular Expression</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<TResult> Create<TResult>(IRegex regex,Func<StringView,int,TResult> func,bool greedy = true)
+        {
+            return new Regex<TResult>(regex, func, greedy, DefaultError);
+        }
+
         /// <summary>
         /// Create Simple Regex Expression
         /// </summary>
@@ -131,7 +135,7 @@ namespace PEGer
         /// <returns>Regex Expression</returns>
         public static Regex<StringView> Create(IRegex regex, bool greedy = true)
         {
-            return Regex<StringView>.Create(regex, (view, _) => view, greedy);
+            return new Regex<StringView>(regex, (view, _) => view, greedy, DefaultError);
         }
 
         /// <summary>
@@ -143,18 +147,45 @@ namespace PEGer
         /// <returns>Regex Expression</returns>
         public static Regex<StringView> Create(IRegex regex, Func<Exception> error, bool greedy = true)
         {
-            return Regex<StringView>.Create(regex, (view, _) => view, error, greedy);
+            return new Regex<StringView>(regex, (view, _) => view, greedy, error);
         }
 
         /// <summary>
         /// Transform Regex to Regex Expression
         /// </summary>
         /// <param name="regex">Base Regex</param>
-        /// <param name="greedy">Greedy Flag(if true, this match will do greedy)</param>
+        /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
         /// <returns>Regex Expression</returns>
         public static Regex<StringView> ToExpr(this IRegex regex, bool greedy = true)
         {
             return Create(regex, greedy);
+        }
+
+        /// <summary>
+        /// Transform Regex to Regex Expression with Transform Function
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="regex">Base Regex</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<T> ToExpr<T>(this IRegex regex, Func<StringView, int, T> func, bool greedy = true)
+        {
+            return new Regex<T>(regex, func, greedy, DefaultError);
+        }
+
+        /// <summary>
+        /// Transform Regex to Regex Expression with Transform Function and Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <param name="regex">Base Regex</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
+        /// <returns>Regex Expression</returns>
+        public static Regex<T> ToExpr<T>(this IRegex regex, Func<StringView, int, T> func, Func<Exception> error, bool greedy = true)
+        {
+            return new Regex<T>(regex, func, greedy, error);
         }
     }
 }

@@ -120,26 +120,26 @@ namespace PEGer
 
     public class EqualSelect7<T> : Select<T, T, T, T, T, T, T, T>
     {
-        public EqualSelect7(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, ExpressionBase<T> expr5, ExpressionBase<T> expr6, ExpressionBase<T> expr7, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<T, T> func4, Func<T, T> func5, Func<T, T> func6, Func<T, T> func7, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, expr5, expr6, expr7, func1, func2, func3, func4, func5, func6, func7, error)
+        public EqualSelect7(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, ExpressionBase<T> expr5, ExpressionBase<T> expr6, ExpressionBase<T> expr7, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, expr5, expr6, expr7, Echo, Echo, Echo, Echo, Echo, Echo, Echo, error)
         {
 
         }
 
         public Select<T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7, Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, func1, func2, func3, func4, func5, func6, func7, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, func1, func2, func3, func4, func5, func6, func7, error);
         }
         public Select<T, T, T, T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<T, TResult> func5, Func<T, TResult> func6, Func<T, TResult> func7)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, func1, func2, func3, func4, func5, func6, func7);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, func1, func2, func3, func4, func5, func6, func7);
         }
         public Select<T, T, T, T, T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<T>.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, this.expr5, this.expr6, this.expr7, Echo, Echo, Echo, Echo, Echo, Echo, Echo, error);
         }
         public static EqualSelect8<T> operator |(EqualSelect7<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect8<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, lhs.expr5, lhs.expr6, lhs.expr7, rhs, Echo, Echo, Echo, Echo, Echo, Echo, Echo, Echo, null);
+            return new EqualSelect8<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, lhs.expr5, lhs.expr6, lhs.expr7, rhs, null);
         }
     }
 }

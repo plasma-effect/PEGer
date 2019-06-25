@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PEGer;
-using TrueRegex;
 using static TrueRegex.Predefined;
 using static UtilityLibrary.IntegerEnumerable;
 
@@ -13,20 +12,17 @@ namespace ParserTest
     public class SelectTest
     {
         const int N = 16;
-        static Regex<string>[] regexes;
+        static String<string>[] strings;
         static Func<string, int>[] funcs;
-        static Dictionary<string, int> dict;
         static string chars = "abcdefghijklmnopq";
         static SelectTest()
         {
-            regexes = new Regex<string>[N];
+            strings = new String<string>[N];
             funcs = new Func<string, int>[N];
-            dict = new Dictionary<string, int>();
-            foreach(var i in Range(N))
+            foreach (var i in Range(N))
             {
-                regexes[i] = Regex<string>.Create(Chars.Create(chars[i]), (a, _) => a.ToString());
-                funcs[i] = (s) => dict[s];
-                dict[chars[i].ToString()] = i;
+                strings[i] = chars[i].ToString().ToExpr();
+                funcs[i] = _ => i * i;
             }
         }
         #region custom_exceptions
@@ -96,15 +92,15 @@ namespace ParserTest
         }
         #endregion
         [TestMethod]
-        public void SelectTest2CustomFunctionCustomError()
+        public void SelectTest2CustomError()
         {
             const int K = 2;
-            var expr = Select<int>.Create(regexes[0], regexes[1], funcs[0], funcs[1], CustomException);
+            var expr = Select.Create(strings[0], strings[1], funcs[0], funcs[1], CustomException);
             var parser = Parser.Create(expr);
-            foreach(var i in Range(K))
+            foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -114,51 +110,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest2CustomFunctionNormalError()
+        public void SelectTest2NormalError()
         {
             const int K = 2;
-            var expr = Select<int>.Create(regexes[0], regexes[1], funcs[0], funcs[1]);
-            var parser = Parser.Create(expr);
-            foreach(var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest2NoFunctionCustomError()
-        {
-            const int K = 2;
-            var expr = Select<string>.Create(regexes[0], regexes[1], CustomException);
+            var expr = Select.Create(strings[0], strings[1], funcs[0], funcs[1]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach(var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest2NoFunctionNormalError()
-        {
-            const int K = 2;
-            var expr = Select<string>.Create(regexes[0], regexes[1]);
-            var parser = Parser.Create(expr);
-            foreach(var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -166,17 +126,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest3CustomFunctionCustomError()
+        public void SelectTest3CustomError()
         {
             const int K = 3;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], funcs[0], funcs[1], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], funcs[0], funcs[1], funcs[2], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -186,15 +145,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest3CustomFunctionNormalError()
+        public void SelectTest3NormalError()
         {
             const int K = 3;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], funcs[0], funcs[1], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], funcs[0], funcs[1], funcs[2]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -202,53 +161,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest3NoFunctionCustomError()
-        {
-            const int K = 3;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest3NoFunctionNormalError()
-        {
-            const int K = 3;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest4CustomFunctionCustomError()
+        public void SelectTest4CustomError()
         {
             const int K = 4;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], funcs[0], funcs[1], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], funcs[0], funcs[1], funcs[2], funcs[3], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -258,15 +180,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest4CustomFunctionNormalError()
+        public void SelectTest4NormalError()
         {
             const int K = 4;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], funcs[0], funcs[1], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], funcs[0], funcs[1], funcs[2], funcs[3]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -274,53 +196,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest4NoFunctionCustomError()
-        {
-            const int K = 4;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest4NoFunctionNormalError()
-        {
-            const int K = 4;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest5CustomFunctionCustomError()
+        public void SelectTest5CustomError()
         {
             const int K = 5;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -330,15 +215,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest5CustomFunctionNormalError()
+        public void SelectTest5NormalError()
         {
             const int K = 5;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -346,53 +231,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest5NoFunctionCustomError()
-        {
-            const int K = 5;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest5NoFunctionNormalError()
-        {
-            const int K = 5;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest6CustomFunctionCustomError()
+        public void SelectTest6CustomError()
         {
             const int K = 6;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -402,15 +250,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest6CustomFunctionNormalError()
+        public void SelectTest6NormalError()
         {
             const int K = 6;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -418,53 +266,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest6NoFunctionCustomError()
-        {
-            const int K = 6;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest6NoFunctionNormalError()
-        {
-            const int K = 6;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest7CustomFunctionCustomError()
+        public void SelectTest7CustomError()
         {
             const int K = 7;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -474,15 +285,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest7CustomFunctionNormalError()
+        public void SelectTest7NormalError()
         {
             const int K = 7;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -490,53 +301,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest7NoFunctionCustomError()
-        {
-            const int K = 7;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest7NoFunctionNormalError()
-        {
-            const int K = 7;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest8CustomFunctionCustomError()
+        public void SelectTest8CustomError()
         {
             const int K = 8;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -546,15 +320,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest8CustomFunctionNormalError()
+        public void SelectTest8NormalError()
         {
             const int K = 8;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -562,53 +336,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest8NoFunctionCustomError()
-        {
-            const int K = 8;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest8NoFunctionNormalError()
-        {
-            const int K = 8;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest9CustomFunctionCustomError()
+        public void SelectTest9CustomError()
         {
             const int K = 9;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -618,15 +355,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest9CustomFunctionNormalError()
+        public void SelectTest9NormalError()
         {
             const int K = 9;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -634,53 +371,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest9NoFunctionCustomError()
-        {
-            const int K = 9;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest9NoFunctionNormalError()
-        {
-            const int K = 9;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest10CustomFunctionCustomError()
+        public void SelectTest10CustomError()
         {
             const int K = 10;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -690,15 +390,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest10CustomFunctionNormalError()
+        public void SelectTest10NormalError()
         {
             const int K = 10;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -706,53 +406,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest10NoFunctionCustomError()
-        {
-            const int K = 10;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest10NoFunctionNormalError()
-        {
-            const int K = 10;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest11CustomFunctionCustomError()
+        public void SelectTest11CustomError()
         {
             const int K = 11;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -762,15 +425,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest11CustomFunctionNormalError()
+        public void SelectTest11NormalError()
         {
             const int K = 11;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -778,53 +441,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest11NoFunctionCustomError()
-        {
-            const int K = 11;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest11NoFunctionNormalError()
-        {
-            const int K = 11;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest12CustomFunctionCustomError()
+        public void SelectTest12CustomError()
         {
             const int K = 12;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -834,15 +460,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest12CustomFunctionNormalError()
+        public void SelectTest12NormalError()
         {
             const int K = 12;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -850,53 +476,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest12NoFunctionCustomError()
-        {
-            const int K = 12;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest12NoFunctionNormalError()
-        {
-            const int K = 12;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest13CustomFunctionCustomError()
+        public void SelectTest13CustomError()
         {
             const int K = 13;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -906,15 +495,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest13CustomFunctionNormalError()
+        public void SelectTest13NormalError()
         {
             const int K = 13;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -922,53 +511,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest13NoFunctionCustomError()
-        {
-            const int K = 13;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest13NoFunctionNormalError()
-        {
-            const int K = 13;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest14CustomFunctionCustomError()
+        public void SelectTest14CustomError()
         {
             const int K = 14;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -978,15 +530,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest14CustomFunctionNormalError()
+        public void SelectTest14NormalError()
         {
             const int K = 14;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -994,53 +546,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest14NoFunctionCustomError()
-        {
-            const int K = 14;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest14NoFunctionNormalError()
-        {
-            const int K = 14;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest15CustomFunctionCustomError()
+        public void SelectTest15CustomError()
         {
             const int K = 15;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], strings[14], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13], funcs[14], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -1050,15 +565,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest15CustomFunctionNormalError()
+        public void SelectTest15NormalError()
         {
             const int K = 15;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], strings[14], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13], funcs[14]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -1066,17 +581,16 @@ namespace ParserTest
                 Assert.AreEqual(exceptions.Count, K + 1);
             }
         }
-
         [TestMethod]
-        public void SelectTest15NoFunctionCustomError()
+        public void SelectTest16CustomError()
         {
-            const int K = 15;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], CustomException);
+            const int K = 16;
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], strings[14], strings[15], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13], funcs[14], funcs[15], CustomException);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
+                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out _, out _));
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {
@@ -1086,87 +600,15 @@ namespace ParserTest
         }
 
         [TestMethod]
-        public void SelectTest15NoFunctionNormalError()
-        {
-            const int K = 15;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest16CustomFunctionCustomError()
+        public void SelectTest16NormalError()
         {
             const int K = 16;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], regexes[15], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], CustomException);
+            var expr = Select.Create(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9], strings[10], strings[11], strings[12], strings[13], strings[14], strings[15], funcs[0], funcs[1], funcs[2], funcs[3], funcs[4], funcs[5], funcs[6], funcs[7], funcs[8], funcs[9], funcs[10], funcs[11], funcs[12], funcs[13], funcs[14], funcs[15]);
             var parser = Parser.Create(expr);
             foreach (var i in Range(K))
             {
                 Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest16CustomFunctionNormalError()
-        {
-            const int K = 16;
-            var expr = Select<int>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], regexes[15], funcs[0], funcs[1], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2], funcs[2]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, i);
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions.Count, K + 1);
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest16NoFunctionCustomError()
-        {
-            const int K = 16;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], regexes[15], CustomException);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
-            }
-            foreach (var i in Range(K, N + 1))
-            {
-                Assert.IsFalse(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(exceptions[0].Exception.Message, $"error: {K}");
-            }
-        }
-
-        [TestMethod]
-        public void SelectTest16NoFunctionNormalError()
-        {
-            const int K = 16;
-            var expr = Select<string>.Create(regexes[0], regexes[1], regexes[2], regexes[3], regexes[4], regexes[5], regexes[6], regexes[7], regexes[8], regexes[9], regexes[10], regexes[11], regexes[12], regexes[13], regexes[14], regexes[15]);
-            var parser = Parser.Create(expr);
-            foreach (var i in Range(K))
-            {
-                Assert.IsTrue(parser.Parse(chars[i].ToString(), out var ret, out var exceptions, out var end));
-                Assert.AreEqual(ret, chars[i].ToString());
+                Assert.AreEqual(ret, i * i);
             }
             foreach (var i in Range(K, N + 1))
             {

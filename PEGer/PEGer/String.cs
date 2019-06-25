@@ -30,29 +30,6 @@ namespace PEGer
         {
             return new StringInstancedClass<TResult, ParseResult>(this.str, this.func, this.error, parser, thisIndex);
         }
-
-        /// <summary>
-        /// Create String Expression with Transform Function
-        /// </summary>
-        /// <param name="str">Target String</param>
-        /// <param name="func">Transform Function</param>
-        /// <returns>String Expression</returns>
-        public static String<TResult> Create(string str, Func<int, TResult> func)
-        {
-            return new String<TResult>(str, func, String.DefaultException);
-        }
-
-        /// <summary>
-        /// Create String Expression with Transform Function and Custom Exception
-        /// </summary>
-        /// <param name="str">Target String</param>
-        /// <param name="func">Transform Function</param>
-        /// <param name="error">Function that return Custom Exception</param>
-        /// <returns>String Expression</returns>
-        public static String<TResult> Create(string str, Func<int, TResult> func, Func<int, Exception> error)
-        {
-            return new String<TResult>(str, func, error);
-        }
     }
 
     /// <summary>
@@ -63,6 +40,31 @@ namespace PEGer
         internal static ArgumentException DefaultException(int index)
         {
             return new ArgumentException($"Matching failed at {index + 1}");
+        }
+
+        /// <summary>
+        /// Create String Expression with Transform Function
+        /// </summary>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="str">Target String</param>
+        /// <param name="func">Transform Function</param>
+        /// <returns>String Expression</returns>
+        public static String<TResult> Create<TResult>(string str, Func<int, TResult> func)
+        {
+            return new String<TResult>(str, func, DefaultException);
+        }
+
+        /// <summary>
+        /// Create String Expression with Transform Function and Custom Exception
+        /// </summary>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="str">Target String</param>
+        /// <param name="func">Transform Function</param>
+        /// <param name="error">Function that return Custom Exception</param>
+        /// <returns>String Expression</returns>
+        public static String<TResult> Create<TResult>(string str, Func<int, TResult> func, Func<int, Exception> error)
+        {
+            return new String<TResult>(str, func, error);
         }
 
         /// <summary>
@@ -105,7 +107,7 @@ namespace PEGer
         /// <returns>String Expression</returns>
         public static String<T> ToExpr<T>(this string str,Func<int,T> func)
         {
-            return String<T>.Create(str, func);
+            return new String<T>(str, func, DefaultException);
         }
 
         /// <summary>
@@ -118,7 +120,7 @@ namespace PEGer
         /// <returns>String Expression</returns>
         public static String<T> ToExpr<T>(this string str, Func<int, T> func, Func<int, Exception> error)
         {
-            return String<T>.Create(str, func, error);
+            return new String<T>(str, func, error);
         }
     }
 

@@ -18,12 +18,12 @@ namespace ParserTest
             }
             return ret;
         }
-        static Regex<int> regex = Regex<int>.Create(Number, (view, _) => int.Parse(view.ToString()));
+        static Regex<int> regex = Regex.Create(Number, (view, _) => int.Parse(view.ToString()));
 
         [TestMethod]
         public void RepeatTest1()
         {
-            var rep = Repeat<int>.Create(regex, Sum);
+            var rep = Repeat.Create(regex, Sum);
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
@@ -38,7 +38,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest2()
         {
-            var rep = Repeat<int>.Create(regex, Sum, 2);
+            var rep = Repeat.Create(regex, Sum, 2);
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
@@ -54,7 +54,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest3()
         {
-            var rep = Repeat<int>.Create(regex, Sum, 2, 3);
+            var rep = Repeat.Create(regex, Sum, 2, 3);
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4", out var ret, out var exceptions, out var end));
@@ -70,7 +70,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest4()
         {
-            var rep = Repeat<int>.Create(regex, Sum, _ => new Exception("Test"));
+            var rep = Repeat.Create(regex, Sum, _ => new Exception("Test"));
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
@@ -85,7 +85,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest5()
         {
-            var rep = Repeat<int>.Create(regex, Sum, 2, _ => new Exception("Test"));
+            var rep = Repeat.Create(regex, Sum, 2, _ => new Exception("Test"));
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));
@@ -101,7 +101,7 @@ namespace ParserTest
         [TestMethod]
         public void RepeatTest6()
         {
-            var rep = Repeat<int>.Create(regex, Sum, 2, 3, _ => new Exception("Test"));
+            var rep = Repeat.Create(regex, Sum, 2, 3, _ => new Exception("Test"));
             var parser = Parser.Create(rep);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 a", out var ret, out var exceptions, out var end));

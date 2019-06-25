@@ -8,28 +8,22 @@ using static UtilityLibrary.Expected<PEGer.ParsingException>;
 
 namespace PEGer
 {
-    /// <summary>
-    /// Optional Expression
-    /// </summary>
-    /// <typeparam name="TResult">Return Type</typeparam>
-    public static class Optional<TResult>
+    public static class Optional
     {
         /// <summary>
         /// Create Optional Expression
         /// </summary>
         /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
         /// <param name="expr">Expression</param>
         /// <param name="success">Function that call if parsing is success</param>
         /// <param name="failure">Function that call if parsing is failure</param>
         /// <returns></returns>
-        public static Optional<T,TResult> Create<T>(ExpressionBase<T> expr,Func<T,TResult> success,Func<TResult> failure)
+        public static Optional<T, TResult> Create<T,TResult>(ExpressionBase<T> expr, Func<T, TResult> success, Func<TResult> failure)
         {
             return new Optional<T, TResult>(expr, success, failure);
         }
-    }
 
-    public static class Optional
-    {
         /// <summary>
         /// Create Simple Optional Expression
         /// </summary>

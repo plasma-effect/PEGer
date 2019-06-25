@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PEGer;
-using TrueRegex;
 using static TrueRegex.Predefined;
 
 namespace ParserTest
@@ -11,7 +10,7 @@ namespace ParserTest
     [TestClass]
     public class SequenceTest
     {
-        static Regex<int> number = Regex<int>.Create(Number, (view, _) => int.Parse(view.ToString()));
+        static Regex<int> number = Regex.Create(Number, (view, _) => int.Parse(view.ToString()));
         static String<string> plus = "+".ToExpr();
 
         static int SumParams(params int[] vs)
@@ -102,7 +101,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest2NoError()
         {
-            var expr = Sequence<int>.Create(number, number, Sum);
+            var expr = Sequence.Create(number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2", out var ret, out var exceptions, out var end));
@@ -117,7 +116,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest2WithError()
         {
-            var expr = Sequence<int>.Create(number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2", out var ret, out var exceptions, out var end));
@@ -133,7 +132,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest3NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3", out var ret, out var exceptions, out var end));
@@ -148,7 +147,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest3WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3", out var ret, out var exceptions, out var end));
@@ -164,7 +163,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest4NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4", out var ret, out var exceptions, out var end));
@@ -179,7 +178,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest4WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4", out var ret, out var exceptions, out var end));
@@ -195,7 +194,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest5NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5", out var ret, out var exceptions, out var end));
@@ -210,7 +209,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest5WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5", out var ret, out var exceptions, out var end));
@@ -226,7 +225,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest6NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6", out var ret, out var exceptions, out var end));
@@ -241,7 +240,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest6WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6", out var ret, out var exceptions, out var end));
@@ -257,7 +256,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest7NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7", out var ret, out var exceptions, out var end));
@@ -272,7 +271,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest7WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7", out var ret, out var exceptions, out var end));
@@ -288,7 +287,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest8NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8", out var ret, out var exceptions, out var end));
@@ -303,7 +302,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest8WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8", out var ret, out var exceptions, out var end));
@@ -319,7 +318,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest9NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9", out var ret, out var exceptions, out var end));
@@ -334,7 +333,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest9WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9", out var ret, out var exceptions, out var end));
@@ -350,7 +349,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest10NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10", out var ret, out var exceptions, out var end));
@@ -365,7 +364,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest10WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10", out var ret, out var exceptions, out var end));
@@ -381,7 +380,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest11NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11", out var ret, out var exceptions, out var end));
@@ -396,7 +395,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest11WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11", out var ret, out var exceptions, out var end));
@@ -412,7 +411,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest12NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12", out var ret, out var exceptions, out var end));
@@ -427,7 +426,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest12WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12", out var ret, out var exceptions, out var end));
@@ -443,7 +442,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest13NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13", out var ret, out var exceptions, out var end));
@@ -458,7 +457,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest13WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13", out var ret, out var exceptions, out var end));
@@ -474,7 +473,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest14NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14", out var ret, out var exceptions, out var end));
@@ -489,7 +488,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest14WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14", out var ret, out var exceptions, out var end));
@@ -505,7 +504,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest15NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14 15", out var ret, out var exceptions, out var end));
@@ -520,7 +519,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest15WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14 15", out var ret, out var exceptions, out var end));
@@ -536,7 +535,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest16NoError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16", out var ret, out var exceptions, out var end));
@@ -551,7 +550,7 @@ namespace ParserTest
         [TestMethod]
         public void SequenceTest16WithError()
         {
-            var expr = Sequence<int>.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
+            var expr = Sequence.Create(number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, Sum, CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16", out var ret, out var exceptions, out var end));
@@ -567,7 +566,7 @@ namespace ParserTest
         [TestMethod]
         public void CustomSequenceTestNoError()
         {
-            var expr = Sequence<int>.Create(number, plus, number, (a, _, b) => a + b);
+            var expr = Sequence.Create(number, plus, number, (a, _, b) => a + b);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 + 2", out var ret, out var exceptions, out var end));
@@ -582,7 +581,7 @@ namespace ParserTest
         [TestMethod]
         public void CustomSequenceTestWithError()
         {
-            var expr = Sequence<int>.Create(number, plus, number, (a, _, b) => a + b,CustomError);
+            var expr = Sequence.Create(number, plus, number, (a, _, b) => a + b,CustomError);
             var parser = Parser.Create(expr);
             {
                 Assert.IsTrue(parser.Parse("1 + 2", out var ret, out var exceptions, out var end));

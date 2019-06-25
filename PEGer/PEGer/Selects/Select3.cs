@@ -80,26 +80,26 @@ namespace PEGer
 
     public class EqualSelect3<T> : Select<T, T, T, T>
     {
-        public EqualSelect3(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, func1, func2, func3, error)
+        public EqualSelect3(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, Func<ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, Echo, Echo, Echo, error)
         {
 
         }
 
         public Select<T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3, error);
         }
         public Select<T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3);
+            return Select.Create(this.expr1, this.expr2, this.expr3, func1, func2, func3);
         }
         public Select<T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<T>.Create(this.expr1, this.expr2, this.expr3, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, Echo, Echo, Echo, error);
         }
         public static EqualSelect4<T> operator |(EqualSelect3<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect4<T>(lhs.expr1, lhs.expr2, lhs.expr3, rhs, Echo, Echo, Echo, Echo, null);
+            return new EqualSelect4<T>(lhs.expr1, lhs.expr2, lhs.expr3, rhs, null);
         }
     }
 }

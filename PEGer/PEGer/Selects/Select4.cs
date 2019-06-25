@@ -90,26 +90,26 @@ namespace PEGer
 
     public class EqualSelect4<T> : Select<T, T, T, T, T>
     {
-        public EqualSelect4(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, Func<T, T> func1, Func<T, T> func2, Func<T, T> func3, Func<T, T> func4, Func<ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, func1, func2, func3, func4, error)
+        public EqualSelect4(ExpressionBase<T> expr1, ExpressionBase<T> expr2, ExpressionBase<T> expr3, ExpressionBase<T> expr4, Func<ParsingException, ParsingException, ParsingException, ParsingException, Exception> error) : base(expr1, expr2, expr3, expr4, Echo, Echo, Echo, Echo, error)
         {
 
         }
 
         public Select<T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4, Func<ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, func1, func2, func3, func4, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, func1, func2, func3, func4, error);
         }
         public Select<T, T, T, T, TResult> Change<TResult>(Func<T, TResult> func1, Func<T, TResult> func2, Func<T, TResult> func3, Func<T, TResult> func4)
         {
-            return Select<TResult>.Create(this.expr1, this.expr2, this.expr3, this.expr4, func1, func2, func3, func4);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, func1, func2, func3, func4);
         }
         public Select<T, T, T, T, T> Change(Func<ParsingException, ParsingException, ParsingException, ParsingException, Exception> error)
         {
-            return Select<T>.Create(this.expr1, this.expr2, this.expr3, this.expr4, error);
+            return Select.Create(this.expr1, this.expr2, this.expr3, this.expr4, Echo, Echo, Echo, Echo, error);
         }
         public static EqualSelect5<T> operator |(EqualSelect4<T> lhs, ExpressionBase<T> rhs)
         {
-            return new EqualSelect5<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, rhs, Echo, Echo, Echo, Echo, Echo, null);
+            return new EqualSelect5<T>(lhs.expr1, lhs.expr2, lhs.expr3, lhs.expr4, rhs, null);
         }
     }
 }
