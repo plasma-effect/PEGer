@@ -8,16 +8,24 @@
     <Copyright>Copyright (c) plasma_effect</Copyright>
     <Authors>plasma-effect</Authors>
     <Company />
-    <PackageReleaseNotes>Change all static class for Create method to No generics class (And Remove all static class, this is destructive chage)</PackageReleaseNotes>
+    <PackageReleaseNotes>Add ExpressionBase&lt;T&gt;.ToOptional(T)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/plasma-effect/PEGer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/plasma-effect/PEGer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="TrueRegex" Version="1.4.0" />
     <PackageReference Include="UtilityLibrary" Version="0.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

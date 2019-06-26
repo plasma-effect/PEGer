@@ -81,6 +81,11 @@ namespace PEGer
             }
             return this.parser.ParseFullMatch(str, out ret, out exceptions);
         }
+
+        public Optional<T, T> ToOptional(T failure)
+        {
+            return new Optional<T, T>(this, Echo, () => failure);
+        }
     }
 
     internal interface IInstancedExpression
