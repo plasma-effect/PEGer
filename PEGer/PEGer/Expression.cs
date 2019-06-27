@@ -86,6 +86,26 @@ namespace PEGer
         {
             return new Optional<T, T>(this, Echo, () => failure);
         }
+
+        public MakeSequence<T, U> Next<U>(ExpressionBase<U> rhs)
+        {
+            return new MakeSequence<T, U>(this, rhs);
+        }
+
+        public static AndPredicate<T> operator!(ExpressionBase<T> expr)
+        {
+            return AndPredicate.Create(expr);
+        }
+
+        public NotPredicate<T,TResult> Not<TResult>(TResult failure)
+        {
+            return NotPredicate.Create(this, failure);
+        }
+
+        public NotPredicate<T,TResult> Not<TResult>(Func<int,TResult> failure)
+        {
+            return NotPredicate.Create(this, failure);
+        }
     }
 
     internal interface IInstancedExpression

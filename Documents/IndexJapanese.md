@@ -1,11 +1,11 @@
 # [Introduction](Japanese/Introduction.md)
 PEGerの概要である。
 # [Parser, Expression, Exception](Japanese/Parser.md)
-PEGerの根幹となるParser、Expression、そしてExceptionについてのドキュメントになる予定。
+PEGerの根幹となるParser、Expression、そしてExceptionについて。
 # [String](Japanese/String.md)
-特定文字列を表現するExpression、Stringについてのドキュメントになる予定。
+特定文字列を表現するExpression、Stringについて。
 # [Regex](Japanese/Regex.md)
-正規言語を表現するExpression、Regexについてのドキュメントになる予定。
+正規言語を表現するExpression、Regexについて。
 # [Repeat](Japanese/Repeat.md)
 繰り返しを表現するExpression、Repeatについてのドキュメントになる予定。
 # [Sequence](Japanese/Sequence.md)

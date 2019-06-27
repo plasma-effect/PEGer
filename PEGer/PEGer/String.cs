@@ -105,7 +105,7 @@ namespace PEGer
         /// <param name="str">Base String</param>
         /// <param name="func">Transform Function</param>
         /// <returns>String Expression</returns>
-        public static String<T> ToExpr<T>(this string str,Func<int,T> func)
+        public static String<T> ToExpr<T>(this string str, Func<int, T> func)
         {
             return new String<T>(str, func, DefaultException);
         }

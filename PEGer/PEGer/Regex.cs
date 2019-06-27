@@ -122,7 +122,7 @@ namespace PEGer
         /// <param name="func">Transform Function</param>
         /// <param name="greedy">Greedy Flag (if true, this match will do greedy)</param>
         /// <returns>Regex Expression</returns>
-        public static Regex<TResult> Create<TResult>(IRegex regex,Func<StringView,int,TResult> func,bool greedy = true)
+        public static Regex<TResult> Create<TResult>(IRegex regex, Func<StringView, int, TResult> func, bool greedy = true)
         {
             return new Regex<TResult>(regex, func, greedy, DefaultError);
         }
