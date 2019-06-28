@@ -1,8 +1,8 @@
 # class String\<TResult\> : ExpressionBase\<TResult\>
 Stringは特定の文字列を表すExpressionである。このクラスのインスタンスは以下の3つの情報を持つ。
 - 対象となる文字列。
-- 解析に成功したときに使われるFunc\<int, TResult\>型の変数。文字列の先頭にあたるindexを渡し、その返り値を解析の結果として返す。
-- 解析に失敗したときに使われるFunc\<int, Exception\>型の変数。このクラスの文字列でのindexを渡し、その返り値をParsingExceptionクラスに包んで解析の結果として返す。
+- 解析に成功した場合に使われるFunc\<int, TResult\>型の変数。文字列の先頭にあたるindexを渡し、その返り値を解析の結果として返す。
+- 解析に失敗した場合に使われるFunc\<int, Exception\>型の変数。このクラスの文字列でのindexを渡し、その返り値をParsingExceptionクラスに包んで解析の結果として返す。
 
 String\<TResult\>クラスのコンストラクタはinternal指定されている。実際に使う場合は以下のStringクラスを経由する。
 

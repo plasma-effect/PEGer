@@ -9,9 +9,9 @@ PEGerの根幹となるParser、Expression、そしてExceptionについて。
 # [Repeat](Japanese/Repeat.md)
 繰り返しを表現するExpression、Repeatについて。
 # [Sequence](Japanese/Sequence.md)
-Expressionの連結を表現するExpression、Sequenceについてのドキュメントになる予定。
+Expressionの連結を表現するExpression、Sequenceについて。
 # [Select](Japanese/Select.md)
-Expressionの選択を表現するExpression、Selectについてのドキュメントになる予定。
+Expressionの選択を表現するExpression、Selectについて。
 # [Optional](Japanese/Optional.md)
 省略可能なExpressionを表現するExpression、Optionalについてのドキュメントになる予定。
 # [Predicate](Japanese/Predicate.md)

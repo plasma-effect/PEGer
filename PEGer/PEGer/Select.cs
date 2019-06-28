@@ -63,7 +63,7 @@ namespace PEGer
         /// <param name="func3">Transform Function that transform Return Value of 3rd Expression to Result Value</param>
         /// <param name="error">Function that return Custom Exception</param>
         /// <returns>Select Expression</returns>
-        public static Select<T1,T2,T3,TResult> Create<T1,T2,T3,TResult>(ExpressionBase<T1> expr1,ExpressionBase<T2> expr2,ExpressionBase<T3> expr3,Func<T1,TResult> func1,Func<T2,TResult> func2,Func<T3,TResult> func3,Func<ParsingException,ParsingException,ParsingException,Exception> error)
+        public static Select<T1, T2, T3, TResult> Create<T1, T2, T3, TResult>(ExpressionBase<T1> expr1, ExpressionBase<T2> expr2, ExpressionBase<T3> expr3, Func<T1, TResult> func1, Func<T2, TResult> func2, Func<T3, TResult> func3, Func<ParsingException, ParsingException, ParsingException, Exception> error)
         {
             return new Select<T1, T2, T3, TResult>(expr1, expr2, expr3, func1, func2, func3, error);
         }
@@ -82,7 +82,7 @@ namespace PEGer
         /// <param name="func2">Transform Function that transform Return Value of 2nd Expression to Result Value</param>
         /// <param name="func3">Transform Function that transform Return Value of 3rd Expression to Result Value</param>
         /// <returns>Select Expression</returns>
-        public static Select<T1,T2,T3,TResult> Create<T1,T2,T3,TResult>(ExpressionBase<T1> expr1,ExpressionBase<T2> expr2,ExpressionBase<T3> expr3,Func<T1,TResult> func1,Func<T2,TResult> func2,Func<T3,TResult> func3)
+        public static Select<T1, T2, T3, TResult> Create<T1, T2, T3, TResult>(ExpressionBase<T1> expr1, ExpressionBase<T2> expr2, ExpressionBase<T3> expr3, Func<T1, TResult> func1, Func<T2, TResult> func2, Func<T3, TResult> func3)
         {
             return new Select<T1, T2, T3, TResult>(expr1, expr2, expr3, func1, func2, func3, null);
         }
@@ -1144,15 +1144,15 @@ namespace PEGer
             this.N = this.exprIndexes.Length;
         }
 
-        protected override Expected<TResult,ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
+        protected override Expected<TResult, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
         {
             var start = index;
             var selectExceptions = new ParsingException[this.N];
-            foreach(var i in Range(this.N))
+            foreach (var i in Range(this.N))
             {
                 index = start;
                 var val = this.Parser[this.exprIndexes[i]].Parse(str, ref index, exceptions, memo);
-                if(val.TryGet(out var obj))
+                if (val.TryGet(out var obj))
                 {
                     return Success(this.funcs[i](obj));
                 }
@@ -1161,7 +1161,7 @@ namespace PEGer
                     selectExceptions[i] = val.GetException();
                 }
             }
-            if(this.error is null)
+            if (this.error is null)
             {
                 exceptions.AddRange(selectExceptions);
                 return Failure<TResult>(new ParsingException(index, new ArgumentException("All Expression don't match this string")));
