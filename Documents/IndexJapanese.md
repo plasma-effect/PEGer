@@ -7,7 +7,7 @@ PEGerの根幹となるParser、Expression、そしてExceptionについて。
 # [Regex](Japanese/Regex.md)
 正規言語を表現するExpression、Regexについて。
 # [Repeat](Japanese/Repeat.md)
-繰り返しを表現するExpression、Repeatについてのドキュメントになる予定。
+繰り返しを表現するExpression、Repeatについて。
 # [Sequence](Japanese/Sequence.md)
 Expressionの連結を表現するExpression、Sequenceについてのドキュメントになる予定。
 # [Select](Japanese/Select.md)

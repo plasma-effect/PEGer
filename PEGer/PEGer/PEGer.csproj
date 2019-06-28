@@ -8,12 +8,12 @@
     <Copyright>Copyright (c) plasma_effect</Copyright>
     <Authors>plasma-effect</Authors>
     <Company />
-    <PackageReleaseNotes>Add Next method for assist of making Sequence Expression and operator! to make AndPredicate and Not methods to make NotPredicate Expression</PackageReleaseNotes>
+    <PackageReleaseNotes>Add Repeat.ToRepeat extension methods to ExpressionBase</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/plasma-effect/PEGer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/plasma-effect/PEGer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.2.0</Version>
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <Version>2.3.0</Version>
+    <AssemblyVersion>2.3.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
