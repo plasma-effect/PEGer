@@ -71,6 +71,61 @@ namespace PEGer
         {
             return new NotPredicate<T, TResult>(expr, (_) => failure, error);
         }
+
+        /// <summary>
+        /// Transform to NotPredicate Expression
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Function that return value when the parsing fails</param>
+        /// <returns>NotPredicate Function</returns>
+        public static NotPredicate<T, TResult> Not<T, TResult>(this ExpressionBase<T> expr, Func<int, TResult> failure)
+        {
+            return new NotPredicate<T, TResult>(expr, failure, NotPredicate.DefaultException);
+        }
+
+        /// <summary>
+        /// Transform to NotPredicate Expression with Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Function that return value when the parsing fails</param>
+        /// <param name="error">Function that return Custom Exception when the parsing succeed</param>
+        /// <returns>NotPredicate Function</returns>
+        public static NotPredicate<T, TResult> Not<T, TResult>(this ExpressionBase<T> expr, Func<int, TResult> failure, Func<int, Exception> error)
+        {
+            return new NotPredicate<T, TResult>(expr, failure, error);
+        }
+
+        /// <summary>
+        /// Transform to NotPredicate Expression with constant Return Value
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">This Expression Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Return Value if the parsing fails</param>
+        /// <returns>NotPredicate Expression</returns>
+        public static NotPredicate<T, TResult> Not<T, TResult>(this ExpressionBase<T> expr, TResult failure)
+        {
+            return new NotPredicate<T, TResult>(expr, (_) => failure, DefaultException);
+        }
+
+        /// <summary>
+        /// Transform to NotPredicate Expression with constant Return Value and Custom Exception
+        /// </summary>
+        /// <typeparam name="T">Target Expression Return Type</typeparam>
+        /// <typeparam name="TResult">This Expression Return Type</typeparam>
+        /// <param name="expr">Target Expression</param>
+        /// <param name="failure">Return Value if the parsing fails</param>
+        /// <param name="error">Functon that return Custom Exception when the parsing succeed</param>
+        /// <returns>NotPredicate Expression</returns>
+        public static NotPredicate<T, TResult> Not<T, TResult>(this ExpressionBase<T> expr, TResult failure, Func<int, Exception> error)
+        {
+            return new NotPredicate<T, TResult>(expr, (_) => failure, error);
+        }
+
     }
 
     public class NotPredicate<T, TResult> : ExpressionBase<TResult>

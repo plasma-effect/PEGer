@@ -13,10 +13,10 @@ Expressionの連結を表現するExpression、Sequenceについて。
 # [Select](Japanese/Select.md)
 Expressionの選択を表現するExpression、Selectについて。
 # [Optional](Japanese/Optional.md)
-省略可能なExpressionを表現するExpression、Optionalについてのドキュメントになる予定。
+省略可能なExpressionを表現するExpression、Optionalについて。
 # [Predicate](Japanese/Predicate.md)
-先読みを表現するExpression、AndPredicateとNotPredicateについてのドキュメントになる予定。
+先読みを表現するExpression、AndPredicateとNotPredicateについて。
 # [Value](Japanese/Value.md)
-非終端記号を表現するExpression、Valueについてのドキュメントになる予定。
+非終端記号を表現するExpression、Valueについて。
 # [Continue](Japanese/Continue.md)
-パースに失敗してもパースを続行することを表明するExpression、Continueについてのドキュメントになる予定。
+パースに失敗してもパースを続行することを表明するExpression、Continueについて。

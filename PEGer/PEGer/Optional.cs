@@ -19,7 +19,7 @@ namespace PEGer
         /// <param name="success">Function that call if parsing is success</param>
         /// <param name="failure">Function that call if parsing is failure</param>
         /// <returns></returns>
-        public static Optional<T, TResult> Create<T,TResult>(ExpressionBase<T> expr, Func<T, TResult> success, Func<TResult> failure)
+        public static Optional<T, TResult> Create<T, TResult>(ExpressionBase<T> expr, Func<T, TResult> success, Func<TResult> failure)
         {
             return new Optional<T, TResult>(expr, success, failure);
         }
@@ -27,12 +27,63 @@ namespace PEGer
         /// <summary>
         /// Create Simple Optional Expression
         /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
         /// <param name="expr">Expression</param>
         /// <param name="failure">Function that call if parsing is failure</param>
         /// <returns>Optional Expression</returns>
         public static Optional<T, T> Create<T>(ExpressionBase<T> expr, Func<T> failure)
         {
             return new Optional<T, T>(expr, Utility.Echo, failure);
+        }
+
+        /// <summary>
+        /// Create Simple Optional Expression
+        /// </summary>
+        /// <typeparam name="T">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="failure">Object that return if parsing is failure</param>
+        /// <returns></returns>
+        public static Optional<T, T> Create<T>(ExpressionBase<T> expr, T failure)
+        {
+            return new Optional<T, T>(expr, Utility.Echo, () => failure);
+        }
+
+        /// <summary>
+        /// Create Optional Expression
+        /// </summary>
+        /// <typeparam name="T">Expression Return Type</typeparam>
+        /// <typeparam name="TResult">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="success">Function that call if parsing is success</param>
+        /// <param name="failure">Function that call if parsing is failure</param>
+        /// <returns></returns>
+        public static Optional<T, TResult> ToOptional<T, TResult>(this ExpressionBase<T> expr, Func<T, TResult> success, Func<TResult> failure)
+        {
+            return new Optional<T, TResult>(expr, success, failure);
+        }
+
+        /// <summary>
+        /// Create Simple Optional Expression
+        /// </summary>
+        /// <typeparam name="T">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="failure">Function that call if parsing is failure</param>
+        /// <returns>Optional Expression</returns>
+        public static Optional<T, T> ToOptional<T>(this ExpressionBase<T> expr, Func<T> failure)
+        {
+            return new Optional<T, T>(expr, Utility.Echo, failure);
+        }
+
+        /// <summary>
+        /// Create Simple Optional Expression
+        /// </summary>
+        /// <typeparam name="T">Return Type</typeparam>
+        /// <param name="expr">Expression</param>
+        /// <param name="failure">Object that return if parsing is failure</param>
+        /// <returns></returns>
+        public static Optional<T, T> ToOptional<T>(this ExpressionBase<T> expr, T failure)
+        {
+            return new Optional<T, T>(expr, Utility.Echo, () => failure);
         }
     }
 
@@ -90,7 +141,7 @@ namespace PEGer
             {
                 var start = index;
                 var ret = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
-                if(ret.TryGet(out var obj)&&obj is T value)
+                if (ret.TryGet(out var obj) && obj is T value)
                 {
                     return Success(this.func(value));
                 }

@@ -1,7 +1,7 @@
 # class Regex\<T\> : ExpressionBase\<T\>
 RegexはTrueRegexパッケージで定義されている正規表現を表現するExpressionである。TrueRegexの詳細は[TrueRegexのドキュメント](https://github.com/plasma-effect/TrueRegex/blob/master/Documents/Japanese.md)を参照。このクラスは以下の4つの情報を持つ。
 - 対象となる正規表現。
-- 解析に成功した場合に使われるFunc\<StringView, int, T\>型の変数。StringViewは文字列の所有権を持たずに文字列を参照するクラスである。解析に成功した部分文字列のStringViewと文字列の先頭にあたるindexを渡し、その返り値を解析の結果として返す。
+- 解析に成功した場合に使われるFunc\<StringView, int, T\>型の変数。StringViewは文字列の所有権を持たずに文字列を参照するクラスである。解析に成功した部分文字列のStringViewと解析の開始のindexを渡し、その返り値を解析の結果として返す。
 - 貪欲に解析するかのフラグ。trueの場合IRegex.LastMatchが、falseの場合IRegex.FirstMatchが用いられる。
 - 解析に失敗した場合に使われるFunc\<Exception\>型の変数。引数を取らずに呼び出され、その返り値をParsingExceptionに包んだものを解析の結果として返す。
 

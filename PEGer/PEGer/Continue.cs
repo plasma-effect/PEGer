@@ -39,7 +39,7 @@ namespace PEGer
     }
 
 
-    public class Continue<T>:ExpressionBase<T>
+    public class Continue<T> : ExpressionBase<T>
     {
         ExpressionBase<T> expr;
 
@@ -76,7 +76,7 @@ namespace PEGer
             protected override Expected<T, ParsingException> ParseImplementation(string str, ref int index, List<ParsingException> exceptions, MemoDictionary memo)
             {
                 var val = this.Parser[this.exprIndex].Parse(str, ref index, exceptions, memo);
-                if (val.TryGet(out var obj)&&obj is T value)
+                if (val.TryGet(out var obj) && obj is T value)
                 {
                     return Success(value);
                 }

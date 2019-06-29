@@ -8,12 +8,12 @@
     <Copyright>Copyright (c) plasma_effect</Copyright>
     <Authors>plasma-effect</Authors>
     <Company />
-    <PackageReleaseNotes>Add Repeat.ToRepeat extension methods to ExpressionBase</PackageReleaseNotes>
+    <PackageReleaseNotes>Change Not method to extension methods.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/plasma-effect/PEGer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/plasma-effect/PEGer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.3.0</Version>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <Version>2.5.0</Version>
+    <AssemblyVersion>2.5.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

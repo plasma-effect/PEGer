@@ -299,7 +299,7 @@ static void Main(string[] args)
 }
 ```
 ---
-## ToRepeat拡張メソッドについて
+# ToRepeat拡張メソッドについて
 ExpressionBaseクラスに対してToRepeat拡張メソッドが定義されている。ToRepeat拡張メソッドの各オーバーロードは上記のCreateメソッドに対応している。
 ### 使用例
 ```csharp
@@ -324,8 +324,8 @@ static void Main(string[] args)
     }
 }
 ```
-## 演算子オーバーロードについて
-ExpressionBaseクラスにはoperator\~がオーバーロードされている。返り値はRepeat.Create(expr)と同じである。
+# 演算子オーバーロードについて
+ExpressionBaseクラスではoperator\~がオーバーロードされている。返り値はRepeat.Create(expr)と同じである。
 ### 使用例
 ```csharp
 static void Main(string[] args)

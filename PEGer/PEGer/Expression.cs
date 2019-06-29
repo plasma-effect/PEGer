@@ -12,9 +12,9 @@ namespace PEGer
 {
     internal static class Expression
     {
-        static public int? Exist(this List<IExpression> list,IExpression expr)
+        static public int? Exist(this List<IExpression> list, IExpression expr)
         {
-            foreach(var i in Range(list.Count))
+            foreach (var i in Range(list.Count))
             {
                 if (list[i].Equals(expr))
                 {
@@ -30,7 +30,7 @@ namespace PEGer
         int Instance<T>(Parser<T> parser, List<IExpression> exprs);
     }
 
-    public abstract class ExpressionBase<T> : IExpression,IParser<T>
+    public abstract class ExpressionBase<T> : IExpression, IParser<T>
     {
         internal abstract InstanceBase<T, ParseResult> InstanceImplement<ParseResult>(Parser<ParseResult> parser, List<IExpression> exprs, int thisIndex);
         public int Instance<TResult>(Parser<TResult> parser, List<IExpression> exprs)
@@ -52,7 +52,7 @@ namespace PEGer
             return Repeat.Create(expr);
         }
 
-        public static EqualSelect2<T> operator|(ExpressionBase<T> lhs, ExpressionBase<T> rhs)
+        public static EqualSelect2<T> operator |(ExpressionBase<T> lhs, ExpressionBase<T> rhs)
         {
             return new EqualSelect2<T>(lhs, rhs, null);
         }
@@ -66,7 +66,7 @@ namespace PEGer
 
         public bool Parse(string str, out T ret, out List<ParsingException> exceptions, out int endPoint)
         {
-            if(this.parser is null)
+            if (this.parser is null)
             {
                 this.parser = Parser.Create(this);
             }
@@ -75,16 +75,11 @@ namespace PEGer
 
         public bool ParseFullMatch(string str, out T ret, out List<ParsingException> exceptions)
         {
-            if(this.parser is null)
+            if (this.parser is null)
             {
                 this.parser = Parser.Create(this);
             }
             return this.parser.ParseFullMatch(str, out ret, out exceptions);
-        }
-
-        public Optional<T, T> ToOptional(T failure)
-        {
-            return new Optional<T, T>(this, Echo, () => failure);
         }
 
         public MakeSequence<T, U> Next<U>(ExpressionBase<U> rhs)
@@ -92,19 +87,9 @@ namespace PEGer
             return new MakeSequence<T, U>(this, rhs);
         }
 
-        public static AndPredicate<T> operator!(ExpressionBase<T> expr)
+        public static AndPredicate<T> operator !(ExpressionBase<T> expr)
         {
             return AndPredicate.Create(expr);
-        }
-
-        public NotPredicate<T,TResult> Not<TResult>(TResult failure)
-        {
-            return NotPredicate.Create(this, failure);
-        }
-
-        public NotPredicate<T,TResult> Not<TResult>(Func<int,TResult> failure)
-        {
-            return NotPredicate.Create(this, failure);
         }
     }
 
